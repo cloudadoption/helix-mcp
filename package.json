@@ -1,0 +1,17 @@
+{
+  "name": "mcp-da-live",
+  "version": "0.0.1",
+  "description": "MCP server for using the DA Admin API",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.9.0",
+    "node-fetch": "3.3.2",
+    "universal-user-agent": "7.0.2",
+    "zod": "3.24.2",
+    "zod-to-json-schema": "3.24.5"
+  }
+}
