@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { daAdminRequest } from '../common/utils.js';
+import { daAdminRequest, daAdminResponseFormat } from '../common/utils.js';
 import { ADMIN_API_URL } from '../common/global.js';
 export const ListSourcesSchema = z.object({
   org: z.string().describe('The organization'),
@@ -11,9 +11,7 @@ export async function listSources(org, repo, path) {
   try {
     const url = `${ADMIN_API_URL}/list/${org}/${repo}/${path}`;
     const result = await daAdminRequest(url);
-    return {
-      content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
-    };
+    return daAdminResponseFormat(result);
   } catch (error) {
     console.error(error);
     throw error;

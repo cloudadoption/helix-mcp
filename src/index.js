@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 
 import * as list from './operations/list.js';
+import * as source from './operations/source.js';
 import { VERSION } from './common/global.js';
 
 const server = new Server(
@@ -24,7 +25,6 @@ const server = new Server(
 );
 
 server.setRequestHandler(ListToolsRequestSchema, async () => {
-  console.error("ListToolsRequestSchema", list.ListSourcesSchema);
   return {
     tools: [
       {
@@ -32,29 +32,78 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         description: "Returns a list of sources from an organization",
         inputSchema: zodToJsonSchema(list.ListSourcesSchema),
       },
+      {
+        name: "da_admin_get_source",
+        description: "Get source content from an organization",
+        inputSchema: zodToJsonSchema(source.GetSourceSchema),
+      },
+      {
+        name: "da_admin_create_source",
+        description: "Create source content within an organization",
+        inputSchema: zodToJsonSchema(source.CreateSourceSchema),
+      },
+      {
+        name: "da_admin_delete_source",
+        description: "Delete source content from an organization",
+        inputSchema: zodToJsonSchema(source.DeleteSourceSchema),
+      },
     ],
   };
 });
 
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  console.error("CallToolRequestSchema", request);
   try {
-    if (!process.env.DA_ADMIN_API_TOKEN) {
-      throw new Error("DA_ADMIN_API_TOKEN is not set");
-    }
-
     if (!request.params.arguments) {
       throw new Error("Arguments are required");
     }
 
     switch (request.params.name) {
       case "da_admin_list_sources": {
-        console.error("da_admin_list_sources", request.params.arguments);
         const args = list.ListSourcesSchema.parse(request.params.arguments);
         const result = await list.listSources(
           args.org,
           args.repo,
           args.path
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      }
+
+      case "da_admin_get_source": {
+        const args = source.GetSourceSchema.parse(request.params.arguments);
+        const result = await source.getSource(
+          args.org,
+          args.repo,
+          args.path,
+          args.ext
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      }
+
+      case "da_admin_create_source": {
+        const args = source.CreateSourceSchema.parse(request.params.arguments);
+        const result = await source.createSource(
+          args.org,
+          args.repo,
+          args.path,
+          args.ext,
+          args.content
+        );
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      }
+
+      case "da_admin_delete_source": {
+        const args = source.DeleteSourceSchema.parse(request.params.arguments);
+        const result = await source.deleteSource(
+          args.org,
+          args.repo,
+          args.path,
+          args.ext
         );
         return {
           content: [{ type: "text", text: JSON.stringify(result, null, 2) }],

@@ -13,7 +13,6 @@ export async function daAdminRequest(
   options = {}
 ) {
   const headers = {
-    "Content-Type": "application/json",
     "User-Agent": USER_AGENT,
     ...options.headers,
   };
@@ -22,11 +21,13 @@ export async function daAdminRequest(
     headers["Authorization"] = `Bearer ${process.env.DA_ADMIN_API_TOKEN}`;
   }
 
-  const response = await fetch(url, {
+  const init = {
     method: options.method || "GET",
     headers,
-    body: options.body ? JSON.stringify(options.body) : undefined,
-  });
+    body: options.body || undefined,
+  };
+
+  const response = await fetch(url, init);
 
   const responseBody = await parseResponseBody(response);
 
@@ -35,4 +36,10 @@ export async function daAdminRequest(
   }
 
   return responseBody;
+}
+
+export function daAdminResponseFormat(data) {
+  return {
+    content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+  };
 }
