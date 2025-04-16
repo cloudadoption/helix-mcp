@@ -15,10 +15,10 @@ An MCP (Model Context Protocol) server that provides tools for interacting with 
 To use this MCP server with Cursor AI, go to `Cursor Settings`, `MCP` and a `New global MCP server`. Add this entry to your list of `mcpServers`:
 
 ```
-"da-live": {
+"da-live-admin": {
  "command": "npx",
   "args": [
-    "https://github.com/kptdobe/da.live-mcp"
+    "https://github.com/kptdobe/mcp-da-live-admin"
   ],
   "env": {
     "DA_ADMIN_API_TOKEN": "your_api_token_here"

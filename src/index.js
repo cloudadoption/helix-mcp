@@ -21,6 +21,17 @@ const server = new Server(
     capabilities: {
       tools: {},
     },
+    instructions: `
+      You are a helpful assistant that provides tools to perform tasks related to the https://da.live platform, leveraging the https://docs.da.live/ admin API.
+      DA standads for Document Authoring. The internal project name was known as "Dark Alley".
+      DA, DA Live, da.live and Dark Alley are all the same plaform.
+      DA Live Admin API is the API used to manage the content on the DA Live platform.
+      org is a organization name.
+      repo is a repository name.
+      path is a path to a file or folder in the content of the repository.
+      Quite often, <org>/<repo>/<path> is used to refer to a specific file or folder in the content of the repository. <path> may contain multiple slashes.
+      Using for example myorg/myrepo/myfolder/myfile.html refers to the myorg org, myrepo repo and file at /myfolder/myfile.html.
+    `,
   }
 );
 

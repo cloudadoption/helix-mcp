@@ -1,11 +1,11 @@
 {
-  "name": "mcp-da-live",
+  "name": "mcp-da-live-admin",
   "version": "0.0.1",
   "description": "MCP server for using the DA Admin API",
   "license": "MIT",
   "type": "module",
   "bin": {
-    "mcp-da-live": "./src/index.js"
+    "mcp-da-live-admin": "./src/index.js"
   },
   "scripts": {
     "start": "node src/index.js"
