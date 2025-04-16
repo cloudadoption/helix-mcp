@@ -4,6 +4,9 @@
   "description": "MCP server for using the DA Admin API",
   "license": "MIT",
   "type": "module",
+  "bin": {
+    "mcp-da-live": "./src/index.js"
+  },
   "scripts": {
     "start": "node src/index.js"
   },
