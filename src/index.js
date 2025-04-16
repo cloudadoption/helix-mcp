@@ -6,7 +6,6 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from 'zod';
-import { zodToJsonSchema } from 'zod-to-json-schema';
 
 import * as list from './operations/list.js';
 import * as source from './operations/source.js';
@@ -27,26 +26,8 @@ const server = new Server(
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: [
-      {
-        name: "da_admin_list_sources",
-        description: "Returns a list of sources inside a folder from an organization",
-        inputSchema: zodToJsonSchema(list.ListSourcesSchema),
-      },
-      {
-        name: "da_admin_get_source",
-        description: "Get source content from an organization: can be an html file or a json file",
-        inputSchema: zodToJsonSchema(source.GetSourceSchema),
-      },
-      {
-        name: "da_admin_create_source",
-        description: "Create source content within an organization: can be an html file or a json file",
-        inputSchema: zodToJsonSchema(source.CreateSourceSchema),
-      },
-      {
-        name: "da_admin_delete_source",
-        description: "Delete source content from an organization: can be an html file or a json file",
-        inputSchema: zodToJsonSchema(source.DeleteSourceSchema),
-      },
+      ...list.ListToolsDefinition,
+      ...source.SourceToolsDefinition,
     ],
   };
 });

@@ -14,12 +14,11 @@ An MCP (Model Context Protocol) server that provides tools for interacting with 
 
 To use this MCP server with Cursor AI, go to `Cursor Settings`, `MCP` and a `New global MCP server`. Add this entry to your list of `mcpServers`:
 
-
 ```
-"mcp-da-live": {
-  "command": "node",
+"da-live": {
+ "command": "npx",
   "args": [
-    "<local_path_to_repo>/src/index.js"
+    "https://github.com/kptdobe/da.live-mcp"
   ],
   "env": {
     "DA_ADMIN_API_TOKEN": "your_api_token_here"
@@ -27,103 +26,7 @@ To use this MCP server with Cursor AI, go to `Cursor Settings`, `MCP` and a `New
 }
 ```
 
-In the chat, you can then ask things like: `Via the DA Admin, give me the list of resources in <your_org>/<your_repo>/<path>`,
-
-## Available MCP Tools
-
-### da_admin_list_sources
-
-Lists sources and directories in a DA repository.
-
-**Input Schema:**
-```json
-{
-  "org": "string",    // The organization name
-  "repo": "string",   // The repository name
-  "path": "string"    // Path to list contents from
-}
-```
-
-**Example Usage:**
-```javascript
-// List contents of root directory
-const result = await mcp.callTool("da_admin_list_sources", {
-  org: "myorg",
-  repo: "myrepo",
-  path: "/"
-});
-
-// List contents of specific directory
-const result = await mcp.callTool("da_admin_list_sources", {
-  org: "myorg",
-  repo: "myrepo",
-  path: "/content/docs"
-});
-```
-
-**Response Format:**
-```json
-{
-  "content": [
-    {
-      "type": "text",
-      "text": "[
-        {
-          "path": "/org/repo/file.html",
-          "name": "file",
-          "ext": "html",
-          "lastModified": 1234567890
-        },
-        {
-          "path": "/org/repo/directory",
-          "name": "directory"
-        }
-      ]"
-    }
-  ]
-}
-```
-
-## Development
-
-The server is built using:
-- Node.js
-- MCP SDK (@modelcontextprotocol/sdk)
-- TypeScript
-
-### Project Structure
-
-```
-.
-├── src/
-│   ├── index.js          # Main server entry point
-│   ├── operations/       # Tool implementations
-│   │   └── list.js      # List sources implementation
-│   └── common/          # Shared utilities
-│       ├── constants.js # Common constants
-│       ├── utils.js     # Utility functions
-│       └── version.js   # Version information
-├── package.json
-└── README.md
-```
-
-### Running the Server
-
-```bash
-npm start
-```
-
-The server will start and listen for MCP tool requests.
-
-## Error Handling
-
-The server handles various error cases:
-- Invalid input parameters
-- Authentication failures
-- Network errors
-- Resource not found errors
-
-Each error is properly formatted according to the MCP specification.
+In the chat, you can then ask things like: `Via the DA Admin, give me the list of resources in <your_org>/<your_repo>/<path>`.
 
 ## Contributing
 

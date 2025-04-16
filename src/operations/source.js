@@ -1,11 +1,12 @@
 import { z } from 'zod';
+import { zodToJsonSchema } from 'zod-to-json-schema';
 import { daAdminRequest, daAdminResponseFormat, formatURL } from '../common/utils.js';
 
 export const GetSourceSchema = z.object({
   org: z.string().describe('The organization'),
   repo: z.string().describe('Name of the repository'),
   path: z.string().describe('Path to the source content'),
-  ext: z.string().describe('The source content file extension')
+  ext: z.string().describe('The source content file extension: html or json'),
 });
 
 export const CreateSourceSchema = z.object({
@@ -42,8 +43,24 @@ export const DeleteSourceSchema = z.object({
   org: z.string().describe('The organization'),
   repo: z.string().describe('Name of the repository'),
   path: z.string().describe('Path to the source content'),
-  ext: z.string().describe('The source content file extension')
+  ext: z.string().describe('The source content file extension: html or json'),
 });
+
+export const SourceToolsDefinition = [{
+  name: "da_admin_get_source",
+  description: "Get source content from an organization: can be an html file or a json file",
+  inputSchema: zodToJsonSchema(GetSourceSchema),
+},
+{
+  name: "da_admin_create_source",
+  description: "Create source content within an organization: can be an html file or a json file",
+  inputSchema: zodToJsonSchema(CreateSourceSchema),
+},
+{
+  name: "da_admin_delete_source",
+  description: "Delete source content from an organization: can be an html file or a json file",
+  inputSchema: zodToJsonSchema(DeleteSourceSchema),
+}];
 
 export async function getSource(org, repo, path, ext) {
   try {
