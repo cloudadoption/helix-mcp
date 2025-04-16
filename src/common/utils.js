@@ -3,7 +3,12 @@ import { USER_AGENT, ADMIN_API_URL } from "./global.js";
 async function parseResponseBody(response) {
   const contentType = response.headers.get("content-type");
   if (contentType?.includes("application/json")) {
-    return response.json();
+    try {
+      return await response.json();
+    } catch (error) {
+      // empty body or invalid JSON
+      return {};
+    }
   }
   return response.text();
 }
