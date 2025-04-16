@@ -29,22 +29,22 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: "da_admin_list_sources",
-        description: "Returns a list of sources from an organization",
+        description: "Returns a list of sources inside a folder from an organization",
         inputSchema: zodToJsonSchema(list.ListSourcesSchema),
       },
       {
         name: "da_admin_get_source",
-        description: "Get source content from an organization",
+        description: "Get source content from an organization: can be an html file or a json file",
         inputSchema: zodToJsonSchema(source.GetSourceSchema),
       },
       {
         name: "da_admin_create_source",
-        description: "Create source content within an organization",
+        description: "Create source content within an organization: can be an html file or a json file",
         inputSchema: zodToJsonSchema(source.CreateSourceSchema),
       },
       {
         name: "da_admin_delete_source",
-        description: "Delete source content from an organization",
+        description: "Delete source content from an organization: can be an html file or a json file",
         inputSchema: zodToJsonSchema(source.DeleteSourceSchema),
       },
     ],

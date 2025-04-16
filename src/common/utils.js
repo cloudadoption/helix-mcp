@@ -1,4 +1,4 @@
-import { USER_AGENT } from "./global.js";
+import { USER_AGENT, ADMIN_API_URL } from "./global.js";
 
 async function parseResponseBody(response) {
   const contentType = response.headers.get("content-type");
@@ -42,4 +42,8 @@ export function daAdminResponseFormat(data) {
   return {
     content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
   };
+}
+
+export function formatURL(api, org, repo, path, ext) {
+  return `${ADMIN_API_URL}/${api}/${org}/${repo}/${path.startsWith("/") ? path.slice(1) : path}${ext ? `.${ext}` : ""  }`;
 }
