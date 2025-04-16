@@ -6,6 +6,7 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { z } from 'zod';
+import { zodToJsonSchema } from 'zod-to-json-schema';
 
 import * as list from './operations/list.js';
 import * as source from './operations/source.js';
@@ -13,7 +14,7 @@ import { VERSION } from './common/global.js';
 
 const server = new Server(
   {
-    name: 'da-admin-mcp-server',
+    name: 'da-live-mcp-server',
     version: VERSION,
   },
   {
@@ -23,12 +24,18 @@ const server = new Server(
   }
 );
 
+const tools = [
+  ...list.tools,
+  ...source.tools,
+];
+
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
-    tools: [
-      ...list.ListToolsDefinition,
-      ...source.SourceToolsDefinition,
-    ],
+    tools: tools.map((t) => ({
+      name: t.name,
+      description: t.description,
+      inputSchema: zodToJsonSchema(t.schema),
+    })),
   };
 });
 
@@ -38,62 +45,17 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       throw new Error("Arguments are required");
     }
 
-    switch (request.params.name) {
-      case "da_admin_list_sources": {
-        const args = list.ListSourcesSchema.parse(request.params.arguments);
-        const result = await list.listSources(
-          args.org,
-          args.repo,
-          args.path
-        );
-        return {
-          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
-        };
-      }
-
-      case "da_admin_get_source": {
-        const args = source.GetSourceSchema.parse(request.params.arguments);
-        const result = await source.getSource(
-          args.org,
-          args.repo,
-          args.path,
-          args.ext
-        );
-        return {
-          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
-        };
-      }
-
-      case "da_admin_create_source": {
-        const args = source.CreateSourceSchema.parse(request.params.arguments);
-        const result = await source.createSource(
-          args.org,
-          args.repo,
-          args.path,
-          args.ext,
-          args.content
-        );
-        return {
-          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
-        };
-      }
-
-      case "da_admin_delete_source": {
-        const args = source.DeleteSourceSchema.parse(request.params.arguments);
-        const result = await source.deleteSource(
-          args.org,
-          args.repo,
-          args.path,
-          args.ext
-        );
-        return {
-          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
-        };
-      }
-
-      default:
-        throw new Error(`Unknown tool: ${request.params.name}`);
+    const tool = tools.find((t) => t.name === request.params.name);
+    if (!tool) {
+      throw new Error(`Unknown tool: ${request.params.name}`);
     }
+
+    const args = tool.schema.parse(request.params.arguments);
+    const result = await tool.handler(args);
+
+    return {
+      content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+    };
   } catch (error) {
     if (error instanceof z.ZodError) {
       throw new Error(`Invalid input: ${JSON.stringify(error.errors)}`);
