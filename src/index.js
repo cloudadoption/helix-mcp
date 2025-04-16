@@ -31,6 +31,8 @@ const server = new Server(
       path is a path to a file or folder in the content of the repository.
       Quite often, <org>/<repo>/<path> is used to refer to a specific file or folder in the content of the repository. <path> may contain multiple slashes.
       Using for example myorg/myrepo/myfolder/myfile.html refers to the myorg org, myrepo repo and file at /myfolder/myfile.html.
+      Content can be access via: https://admin.da.live/source/<org>/<repo>/<path>.<extension>
+      For example, https://admin.da.live/source/myorg/myrepo/myfolder/myfile.html is the URL to access the myfile.html file in the myfolder folder in the myrepo repo in the myorg org.
     `,
   }
 );
