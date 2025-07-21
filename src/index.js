@@ -14,7 +14,7 @@ import { VERSION } from './common/global.js';
 
 const server = new Server(
   {
-    name: 'da-live-mcp-server',
+    name: 'helix-mcp-server',
     version: VERSION,
   },
   {
@@ -80,7 +80,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function runServer() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("DA Admin MCP Server running on stdio");
+  console.error("Helix MCP Server running on stdio");
 }
 
 runServer().catch((error) => {
