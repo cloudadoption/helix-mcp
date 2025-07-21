@@ -1,14 +1,9 @@
-# DA Admin MCP Server
+# Helix MCP Server
 
-An MCP (Model Context Protocol) server that provides tools for interacting with the Document Authoring Admin API. This server allows you to manage content, versions, and configurations in DA repositories through MCP tools.
+An MCP (Model Context Protocol) server that provides tools for interacting with the Helix and Document Authoring Admin API. This server allows you to interact with Helix and DA APIs through MCP tools.
 
 ## Features
 
-- List sources and directories in DA repositories
-- Manage source content (get, create, delete)
-- Handle content versioning
-- Copy and move content between locations
-- Manage configurations
 
 ## Cursor AI setup
 
@@ -18,15 +13,15 @@ To use this MCP server with Cursor AI, go to `Cursor Settings`, `MCP` and a `New
 "da-live-admin": {
  "command": "npx",
   "args": [
-    "https://github.com/kptdobe/mcp-da-live-admin"
+    "https://github.com/cloudadoption/helix-mcp"
   ],
   "env": {
-    "DA_ADMIN_API_TOKEN": "your_api_token_here"
+    "DA_ADMIN_API_TOKEN": "your_api_token_here",
+    "HELIX_ADMIN_API_TOKEN": "your_api_token_here"
   }
 }
 ```
 
-In the chat, you can then ask things like: `Via the DA Admin, give me the list of resources in <your_org>/<your_repo>/<path>`.
 
 ## Contributing
 
