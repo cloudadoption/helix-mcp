@@ -12,11 +12,8 @@ const pageStatusTool = {
     </use_case>
 
     <important_notes>
-      1. Complete workflow: URL → getSiteByBaseURL → listScrapedContentFiles → getScrapedContentFileByKey
-      2. The storage key must be obtained from listScrapedContentFiles first
-      3. Keys are automatically URL-decoded to handle encoded characters
-      4. Use the exact key returned from the file listing without modification
-      5. For specific page content, look for keys that match the URL path you're interested in
+      1. The org, site, branch, and path must be provided, ask the user for them if they are not provided.
+      2. The org, site, branch, and path can be derived from the aem page URL. This is of the form: https://\${branch}--\${site}--\${org}.aem.live/\${path}
     </important_notes>
   `,
     inputSchema:{
@@ -28,7 +25,7 @@ const pageStatusTool = {
     annotations: {
       readOnlyHint: true,
       destructiveHint: false,
-      idempotentHint: true,
+      idempotentHint: false,
       openWorldHint: true,
     },
   },
