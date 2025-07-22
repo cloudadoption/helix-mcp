@@ -1,8 +1,9 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import echoTool from './echo.js';
-
+import pageStatusTool from './page-status.js';
 const tools = [ 
   echoTool,
+  pageStatusTool,
 ];
 
 /**
