@@ -1,4 +1,4 @@
-import { USER_AGENT, ADMIN_API_URL } from "./global.js";
+import { USER_AGENT, HELIX_ADMIN_API_URL } from "./global.js";
 
 async function parseResponseBody(response) {
   const contentType = response.headers.get("content-type");
@@ -50,5 +50,11 @@ export function daAdminResponseFormat(data) {
 }
 
 export function formatURL(api, org, repo, path, ext) {
-  return `${ADMIN_API_URL}/${api}/${org}/${repo}/${path.startsWith("/") ? path.slice(1) : path}${ext ? `.${ext}` : ""  }`;
+  return `${HELIX_ADMIN_API_URL}/${api}/${org}/${repo}/${path.startsWith("/") ? path.slice(1) : path}${ext ? `.${ext}` : ""  }`;
+}
+
+export function wrapToolJSONResult(result) {
+  return {
+    content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+  };
 }
