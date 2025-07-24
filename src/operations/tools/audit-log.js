@@ -40,8 +40,8 @@ const auditLogTool = {
       org: z.string().describe('The organization name'),
       site: z.string().describe('The site name'),
       branch: z.string().describe('The branch name').default('main'),
-      from: z.iso.datetime().optional().describe('Start timestamp for filtering logs (ISO 8601 format)'),
-      to: z.iso.datetime().optional().describe('End timestamp for filtering logs (ISO 8601 format)'),
+      from: z.string().optional().describe('Start timestamp for filtering logs (ISO 8601 format)'),
+      to: z.string().optional().describe('End timestamp for filtering logs (ISO 8601 format)'),
       since: z.string().regex(/^[0-9]+[hdm]$/).optional().describe('Relative time for filtering logs (e.g., "1h", "24h", "7d")'),
     },
     annotations: {
