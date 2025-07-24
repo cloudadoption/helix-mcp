@@ -10,7 +10,7 @@ An MCP (Model Context Protocol) server that provides tools for interacting with 
 To use this MCP server with Cursor AI, go to `Cursor Settings`, `MCP` and a `New global MCP server`. Add this entry to your list of `mcpServers`:
 
 ```
-"da-live-admin": {
+"helix-mcp-server": {
  "command": "npx",
   "args": [
     "https://github.com/cloudadoption/helix-mcp"
