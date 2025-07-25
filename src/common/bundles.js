@@ -15,9 +15,12 @@ import { series, DataChunks, utils } from '@adobe/rum-distiller';
 export async function loadBundles(url, date, domainkey) {
   const endpoint = `https://bundles.aem.page/bundles/${url}/${date}?domainkey=${domainkey}`;
   const resp = await fetch(endpoint);
-  const data = await resp.json();
+  if(resp.ok) {
+    const data = await resp.json();
+    return data;
+  }
 
-  return data;
+  console.error('Bundles Not Found For Your Arguments')
 }
 
 export function errorsFunc(bundle) {
@@ -57,7 +60,7 @@ function filterBundlesByUrl(url, allBundles) {
  */
 export async function getDataChunks(url, domainkey, startdate, enddate) {
   if (!url || !domainkey) {
-    throw new Error('Both url and domainkey are required.');
+    console.error('Both url and domainkey are required.');
   }
   let start;
   let end;
@@ -90,7 +93,7 @@ export async function getDataChunks(url, domainkey, startdate, enddate) {
  */
 export async function getStatistic(url, dataChunks, aggregation) {
   if (!dataChunks || !aggregation) {
-    throw new Error('dataChunks, aggregation, and statistic are required.');
+    console.error('dataChunks, aggregation, and statistic are required.');
   }
 
   let aggHandler;
@@ -117,7 +120,7 @@ export async function getStatistic(url, dataChunks, aggregation) {
   } else if (aggregation === 'errors') {
     aggHandler = errorsFunc; // custom function you defined
   } else {
-    throw new Error(`Unsupported aggregation: ${aggregation}`);
+    console.error(`Unsupported aggregation: ${aggregation}`);
   }
 
   // Preprocess metrics
@@ -216,15 +219,9 @@ export async function getStatistic(url, dataChunks, aggregation) {
  *
  * @returns {Promise<Response>} Array of bundles response.
  */
-export async function getAllBundles(context) {
-  const url = context.params?.url || undefined;
-  const domainkey = context.params?.domainkey || undefined;
-  const startDate = context.params?.startdate || undefined;
-  const endDate = context.params?.enddate || undefined;
-  const aggregation = context.params?.aggregation;
-
+export async function getAllBundles(url, domainkey, startDate, endDate, aggregation) {
   if (!url || !domainkey || !aggregation) {
-    return badRequest('URL, domainKey, and aggregation are required');
+    console.error('URL, domainKey, and aggregation are required');
   }
 
   const dataChunks = await getDataChunks(url, domainkey, startDate, endDate, aggregation);
