@@ -34,6 +34,7 @@ const auditLogTool = {
       2. The org, site, and branch can be derived from the aem page URL. This is of the form: https://\${branch}--\${site}--\${org}.aem.live/\${path}
       3. Time filtering parameters (from, to, since) are optional and can be used to limit the logs to specific timeframes.
       4. The 'since' parameter is a relative time (e.g., '1h', '24h', '7d') while 'from' and 'to' are absolute timestamps.
+      5. Do not make up any information, only use the information that is provided in the response to answer the user's question.
     </important_notes>
   `,
     inputSchema: {
