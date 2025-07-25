@@ -32,7 +32,7 @@ function getDefaultDates() {
 const rumDataTool = {
   name: 'rum-data',
   config: {
-    title: 'Get RUM Data statitsics by URL and Date Range',
+    title: 'Operational Telemetry Data Query Using URL and Date',
     description: `
         <use_case>
         Use this tool to retrieve Core Web Vitals (CWV) and engagement metrics using rum-distiller bundles for a given site or page. 
@@ -55,11 +55,13 @@ const rumDataTool = {
         </use_case>
 
         <important_notes>
-        The **domainkey** must be provided. If you're not seeing any data, visit:
+        - The **domainkey** must be provided. If you're not seeing any data, visit:
         https://aemcs-workspace.adobe.com/customer/generate-rum-domain-key
 
-        You can validate if your key + domain returns results by checking:
-        https://www.aem.live/tools/rum/explorer.html?domain={domain}&startDate=YYYY-MM-DD&endDate=YYYY-MM-DD&domainkey={domainkey}
+        - If the URL contains a protocol (e.g., "https://" or "http://"), always **strip the protocol** and pass only the hostname + path. 
+        Example: convert \`https://www.example.com/page\` to \`www.example.com/page\`
+
+        - When handling the data, the agent must be **extremely accurate and careful**. The insights from this tool are used to **drive key operational decisions**, so **misreporting or inaccuracies are not acceptable**.
         </important_notes>
     `,
     inputSchema: {
