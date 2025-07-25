@@ -68,9 +68,12 @@ const rumDataTool = {
     },
   },
   handler: async ({ url, domainkey, startdate, enddate, aggregation, }) => {
+    if (domainkey === 'force-error') {
+        throw new Error("💥 Domain key triggered forced error");
+    }
     const resp = await getAllBundles(url, domainkey, startdate, enddate, aggregation);
     return wrapToolJSONResult(resp)
-    }   
+  }
 }
 
 export default rumDataTool;
