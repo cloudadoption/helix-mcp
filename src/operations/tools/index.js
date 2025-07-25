@@ -22,7 +22,6 @@ const tools = [
 export default function registerTools(server) {
   tools.forEach((tool) => {
     const { name, config, handler } = tool;
-
     server.registerTool(name, config, handler);
   });
 }
