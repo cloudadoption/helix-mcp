@@ -27,6 +27,24 @@ const auditLogTool = {
       - "job": Background job operations (publish, index, etc.)
       
       The response also includes "from" and "to" timestamps indicating the time range of the logs.
+      
+      **When to use this tool:**
+      - You need to investigate system errors or failures
+      - You want to see who performed specific actions and when
+      - You're troubleshooting publishing or preview issues
+      - You need to audit user activity and system operations
+      - You want to monitor system performance (duration times)
+      - You're debugging deployment or publishing problems
+      - You need to track content changes over time
+      - You want to verify if specific operations completed successfully
+      - You're investigating slow performance or timeouts
+      - You need to see the sequence of operations that occurred
+      
+      **When NOT to use this tool:**
+      - You need current page status information (use page-status or bulk-status tools)
+      - You want to check if a page is published/previewed
+      - You need to find pages with specific publishing states
+      - You're looking for content information rather than system activity
     </use_case>
 
     <important_notes>
