@@ -141,6 +141,9 @@ export const startBulkStatusTool = {
     <important_notes>
       1. The org, site, branch, and path must be provided, ask the user for them if they are not provided.
       2. The org, site, branch, and path can be derived from the aem page URL. This is of the form: https://\${branch}--\${site}--\${org}.aem.live/\${path}
+      3. Do not make up any information, only use the information that is provided in the response to answer the user's question.
+      4. Let the user know that the job will take a few minutes to complete.
+      5. If the user provides a path, it will be used to filter the pages to retrieve the status of which would be faster than retrieving the status of all pages.
     </important_notes>
   `,
     inputSchema:{

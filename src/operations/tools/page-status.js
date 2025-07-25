@@ -14,6 +14,7 @@ const pageStatusTool = {
     <important_notes>
       1. The org, site, branch, and path must be provided, ask the user for them if they are not provided.
       2. The org, site, branch, and path can be derived from the aem page URL. This is of the form: https://\${branch}--\${site}--\${org}.aem.live/\${path}
+      3. Do not make up any information, only use the information that is provided in the response to answer the user's question.
     </important_notes>
   `,
     inputSchema:{
