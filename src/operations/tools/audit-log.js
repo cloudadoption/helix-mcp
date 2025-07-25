@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import { wrapToolJSONResult, formatHelixAdminURL, helixAdminRequest } from '../../common/utils.js';
+import { HELIX_ADMIN_API_URL } from '../../common/global.js';
+import rumCollector from '../../common/rum.js';
 
 const auditLogTool = {
   name: 'audit-log',
@@ -51,7 +53,7 @@ const auditLogTool = {
       openWorldHint: true,
     },
   },
-  handler: async ({ org, site, branch, from, to, since }) => {
+  handler: rumCollector.withRUMTracking('audit-log', async ({ org, site, branch, from, to, since }) => {
     // Build the base URL for the logs endpoint
     const baseUrl = `${formatHelixAdminURL('log', org, site, branch, '').replace(/\/$/, '')}`;
     
@@ -66,7 +68,7 @@ const auditLogTool = {
     const response = await helixAdminRequest(url);
 
     return wrapToolJSONResult(response);
-  },
+  }),
 };
 
 export default auditLogTool;

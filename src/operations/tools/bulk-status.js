@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { wrapToolJSONResult, formatHelixAdminURL, helixAdminRequest } from '../../common/utils.js';
 import { HELIX_ADMIN_API_URL } from '../../common/global.js';
+import rumCollector from '../../common/rum.js';
 
 async function fetchHosts(org, site) {
   try {
@@ -156,7 +157,7 @@ export const startBulkStatusTool = {
       openWorldHint: true,
     },
   },
-  handler: async ({ org, site, branch, path }) => {
+  handler: rumCollector.withRUMTracking('start-bulk-page-status', async ({ org, site, branch, path }) => {
     const url = formatHelixAdminURL('status', org, site, branch, '/*');
 
     const jobJson = await helixAdminRequest(url, {
@@ -181,7 +182,7 @@ export const startBulkStatusTool = {
       created: jobJson.job.createTime,
       jobId,
     });
-  },
+  }),
 };
 
 export const checkBulkStatusTool = {
@@ -207,7 +208,7 @@ export const checkBulkStatusTool = {
       openWorldHint: true,
     },
   },
-  handler: async ({ jobId }) => {
+  handler: rumCollector.withRUMTracking('check-bulk-page-status', async ({ jobId }) => {
     const url = `${HELIX_ADMIN_API_URL}/job/${jobId}/details`;
 
     const jobDetailsJson = await helixAdminRequest(url, {
@@ -241,5 +242,5 @@ export const checkBulkStatusTool = {
       jobId,
       data,
     });
-  },
+  }),
 };

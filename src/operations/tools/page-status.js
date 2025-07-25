@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { wrapToolJSONResult, formatHelixAdminURL, helixAdminRequest } from '../../common/utils.js';
+import rumCollector from '../../common/rum.js';
 
 const pageStatusTool = {
   name: 'page-status',
@@ -29,13 +30,13 @@ const pageStatusTool = {
       openWorldHint: true,
     },
   },
-  handler: async ({ org, site, branch, path }) => {
+  handler: rumCollector.withRUMTracking('page-status', async ({ org, site, branch, path }) => {
     const url = formatHelixAdminURL('status', org, site, branch, path);
 
     const response = await helixAdminRequest(url);
 
     return wrapToolJSONResult(response);
-  },
+  }),
 };
 
 export default pageStatusTool;
