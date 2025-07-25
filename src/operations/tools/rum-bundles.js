@@ -35,7 +35,7 @@ const rumDataTool = {
     title: 'Operational Telemetry Data Query Using URL and Date',
     description: `
         <use_case>
-        Use this tool to retrieve Core Web Vitals (CWV) and engagement metrics using rum-distiller bundles for a given site or page. 
+        Use this tool to retrieve Core Web Vitals (CWV) and engagement metrics for a given site or page. 
         The results provide performance insights across various aggregation types and are scoped to specific paths when applicable.
 
         - **aggregation**: Metric to aggregate by. Must be one of the following:
