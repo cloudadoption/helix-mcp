@@ -53,6 +53,7 @@ const auditLogTool = {
       3. Time filtering parameters (from, to, since) are optional and can be used to limit the logs to specific timeframes.
       4. The 'since' parameter is a relative time (e.g., '1h', '24h', '7d') while 'from' and 'to' are absolute timestamps.
       5. Do not make up any information, only use the information that is provided in the response to answer the user's question.
+      6. If you get an authentication error, get the user to login to https://admin.helix.page/login and then capture the auth_token from the cookie as the token to use for the next request via the tool.
     </important_notes>
   `,
     inputSchema: {
