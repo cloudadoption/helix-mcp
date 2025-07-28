@@ -39,6 +39,7 @@ const auditLogTool = {
       - You want to verify if specific operations completed successfully
       - You're investigating slow performance or timeouts
       - You need to see the sequence of operations that occurred
+      - You want to see if something was published or previewed
       
       **When NOT to use this tool:**
       - You need current page status information (use page-status or bulk-status tools)
