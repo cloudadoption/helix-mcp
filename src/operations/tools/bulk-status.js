@@ -136,11 +136,29 @@ export const startBulkStatusTool = {
       were last published, previewed, and edited, as well as who performed those actions.
 
       This tool is asynchronous and will return a job ID. You can use the check-bulk-page-status tool to check the status of the job and retrieve results.
+      
+      **When to use this tool:**
+      - You need status information for MULTIPLE pages or an entire site
+      - You want to find pages that are previewed but not published
+      - You want to audit the entire site's publishing status
+      - You need to identify pages with outdated content
+      - You're doing a comprehensive site review
+      - You want to find pages that haven't been previewed or published
+      - You need to check publishing workflows across many pages
+      - You're troubleshooting publishing issues across the site
+      
+      **When NOT to use this tool:**
+      - You only need status for ONE specific page (use page-status tool instead)
+      - You need immediate results (this is asynchronous)
+      - You're checking a single page's publishing status
     </use_case>
 
     <important_notes>
       1. The org, site, branch, and path must be provided, ask the user for them if they are not provided.
       2. The org, site, branch, and path can be derived from the aem page URL. This is of the form: https://\${branch}--\${site}--\${org}.aem.live/\${path}
+      3. Do not make up any information, only use the information that is provided in the response to answer the user's question.
+      4. Let the user know that the job will take a few minutes to complete if they don't provide a path.
+      5. If the user provides a path, it will be used to filter the pages to retrieve the status of which would be faster than retrieving the status of all pages.
     </important_notes>
   `,
     inputSchema:{
@@ -190,11 +208,42 @@ export const checkBulkStatusTool = {
     title: 'Check Bulk Page Status',
     description: `
     <use_case>
-      Use this tool to check the status of a bulk page status job and get the results.
+      Use this tool to check the status of a bulk page status job and get the results. The response will include detailed information about all pages in the site or specified path, including:
+
+      **Job Information:**
+      - **name**: Job identifier (e.g., "job-2025-07-25-15-48-26-dc409ab3")
+      - **state**: Current job state ("created", "running", "completed", "stopped", "failed")
+      - **createTime**: When the job was created (ISO 8601 format)
+      - **startTime**: When the job started processing (ISO 8601 format)
+      - **stopTime**: When the job completed (ISO 8601 format, only for completed jobs)
+      - **jobId**: Unique job identifier
+
+      **Page Status Information (when completed):**
+      - **path**: The page path (e.g., "/blog/folder-mapping-deprecated")
+      - **isRedirect**: Boolean indicating if the page is a redirect
+      - **status**: Page status ("Current", "Not published", "Not previewed", "No source", "Pending changes")
+      - **sourceLastModified**: When the source content was last modified (MM/DD/YYYY HH:MM format)
+      - **previewLastModified**: When the page was last previewed (MM/DD/YYYY HH:MM format)
+      - **previewLink**: Full URL to the preview version of the page
+      - **publishLastModified**: When the page was last published (MM/DD/YYYY HH:MM format)
+      - **publishLink**: Full URL to the live version of the page
+
+      **Status Meanings:**
+      - **"Current"**: Page is up-to-date with source content
+      - **"Not published"**: Page is previewed but not published to live
+      - **"Not previewed"**: Page has source content but hasn't been previewed
+      - **"No source"**: Page exists but has no source content
+      - **"Pending changes"**: Page has been modified but changes are not in sequence
+
+      The tool processes all pages and filters out system files like "/helix-env.json" and "/sitemap.json".
     </use_case>
 
     <important_notes>
       1. The job ID must be provided, ask the user for it not provided. You can get the job ID from the start-bulk-page-status tool.
+      2. If the job is still running, only job status information will be returned.
+      3. Page status information is only available when the job state is "completed" or "stopped".
+      4. The tool automatically filters out system files and provides direct links to preview and live versions.
+      5. All timestamps are converted to UTC format for consistency.
     </important_notes>
   `,
     inputSchema:{
