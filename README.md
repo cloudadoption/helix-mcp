@@ -17,7 +17,8 @@ To use this MCP server with Cursor AI, go to `Cursor Settings`, `MCP` and a `New
   ],
   "env": {
     "DA_ADMIN_API_TOKEN": "your_api_token_here",
-    "HELIX_ADMIN_API_TOKEN": "your_api_token_here"
+    "HELIX_ADMIN_API_TOKEN": "your_api_token_here",
+    "RUM_DOMAIN_KEY": "your_rum_domain_key"
   }
 }
 ```
