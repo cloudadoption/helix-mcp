@@ -11,16 +11,41 @@
  */
 
 import { series, DataChunks, utils } from '@adobe/rum-distiller';
+import rumCollector from './rum.js';
 
 export async function loadBundles(url, date, domainkey) {
-  const endpoint = `https://bundles.aem.page/bundles/${url}/${date}?domainkey=${domainkey}`;
-  const resp = await fetch(endpoint);
-  if(resp.ok) {
-    const data = await resp.json();
-    return data;
+  const startTime = Date.now();
+  let error = null;
+  
+  try {
+    const endpoint = `https://bundles.aem.page/bundles/${url}/${date}?domainkey=${domainkey}`;
+    const resp = await fetch(endpoint);
+    
+    if(resp.ok) {
+      const data = await resp.json();
+      return data;
+    } else {
+      throw new Error(`Bundles API error: ${resp.status} - ${resp.statusText}`);
+    }
+  } catch (err) {
+    error = err;
+    console.error('Bundles Not Found For Your Arguments');
+    throw err;
+  } finally {
+    const endTime = Date.now();
+    const duration = endTime - startTime;
+    
+    // Track the bundle API call with RUM
+    rumCollector.trackToolExecution(
+      'rum-bundles-api',
+      { url, date, domainkey: domainkey ? '[REDACTED]' : undefined },
+      duration,
+      !error,
+      error,
+      null, // source
+      `https://bundles.aem.page/bundles/${url}/${date}` // target
+    );
   }
-
-  console.error('Bundles Not Found For Your Arguments')
 }
 
 export function errorsFunc(bundle) {

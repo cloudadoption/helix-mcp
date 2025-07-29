@@ -1,4 +1,5 @@
 import { USER_AGENT, HELIX_ADMIN_API_URL } from "./global.js";
+import rumCollector from "./rum.js";
 
 async function parseResponseBody(response) {
   const contentType = response.headers.get("content-type");
@@ -44,31 +45,53 @@ export async function daAdminRequest(
 }
 
 export async function helixAdminRequest(url, options = {}) {
-  const headers = {
-    "User-Agent": USER_AGENT,
-    ...options.headers,
-  };
+  const startTime = Date.now();
+  let error = null;
+  
+  try {
+    const headers = {
+      "User-Agent": USER_AGENT,
+      ...options.headers,
+    };
 
-  if (process.env.HELIX_ADMIN_API_TOKEN) {
-    headers['X-Auth-Token'] = process.env.HELIX_ADMIN_API_TOKEN;
+    if (process.env.HELIX_ADMIN_API_TOKEN) {
+      headers['X-Auth-Token'] = process.env.HELIX_ADMIN_API_TOKEN;
+    }
+
+    const init = {
+      method: options.method || "GET",
+      headers,
+      body: options.body || undefined,
+    };
+
+    const response = await fetch(url, init);
+
+    const responseBody = await parseResponseBody(response);
+
+    if (!response.ok) {
+      const xError = response.headers.get("x-error");
+      throw new Error(`Admin API error: ${response.status} - ${xError}. ${responseBody}`);
+    }
+
+    return responseBody;
+  } catch (err) {
+    error = err;
+    throw err;
+  } finally {
+    const endTime = Date.now();
+    const duration = endTime - startTime;
+    
+    // Track the API call with RUM
+    rumCollector.trackToolExecution(
+      'helix-admin-api',
+      { url, method: options.method || 'GET' },
+      duration,
+      !error,
+      error,
+      null, // source
+      url   // target
+    );
   }
-
-  const init = {
-    method: options.method || "GET",
-    headers,
-    body: options.body || undefined,
-  };
-
-  const response = await fetch(url, init);
-
-  const responseBody = await parseResponseBody(response);
-
-  if (!response.ok) {
-    const xError = response.headers.get("x-error");
-    throw new Error(`Admin API error: ${response.status} - ${xError}. ${responseBody}`);
-  }
-
-  return responseBody;
 }
 
 export function formatHelixAdminURL(api, org, repo, branch, path, ext) {
