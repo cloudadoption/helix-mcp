@@ -52,6 +52,7 @@ Here are some examples of things you can help with using the tools above:
 - find common 404 errors using the `rum-data` tool
 - find the most visited pages over a given time frame using the `rum-data` tools
 - check on the time it took for indexing to complete using the `audit-log` tool
+- find which user previewed or published something within a given time frame using the `audit-log` tool
 
 ## Communication Style
 
