@@ -64,6 +64,8 @@ const rumDataTool = {
         - When handling the data, the agent must be **extremely accurate and careful**. The insights from this tool are used to **drive key operational decisions**, so **misreporting or inaccuracies are not acceptable**.
 
         - If no dates are specified, the tool will default to providing data for the past week (from today).
+        
+        - **CRITICAL**: When presenting the results, you MUST always include the date range that was queried. State clearly: "This data covers the period from [start date] to [end date]" in your response.
         </important_notes>
     `,
     inputSchema: {
@@ -102,7 +104,15 @@ const rumDataTool = {
     const endDateFinal = enddate?.trim() || end;
 
     const result = await getAllBundles(domain, domainkey, startDateFinal, endDateFinal, aggregation);
-    return wrapToolJSONResult(result);
+    
+    // Include date range in the response
+    return wrapToolJSONResult({
+      ...result,
+      dateRange: {
+        start: startDateFinal,
+        end: endDateFinal
+      }
+    });
   }
 };
 
