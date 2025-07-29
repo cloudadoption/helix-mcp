@@ -62,6 +62,8 @@ const rumDataTool = {
         Example: convert \`https://www.example.com/page\` to \`www.example.com/page\`
 
         - When handling the data, the agent must be **extremely accurate and careful**. The insights from this tool are used to **drive key operational decisions**, so **misreporting or inaccuracies are not acceptable**.
+
+        - If no dates are specified, the tool will default to providing data for the past week (from today).
         </important_notes>
     `,
     inputSchema: {
@@ -95,8 +97,9 @@ const rumDataTool = {
     const domain = removeProtocol(url);
     const { start, end } = getDefaultDates();
 
-    const startDateFinal = startdate || start;
-    const endDateFinal = enddate || end;
+    // Default to one week ago to today if no dates are provided
+    const startDateFinal = startdate?.trim() || start;
+    const endDateFinal = enddate?.trim() || end;
 
     const result = await getAllBundles(domain, domainkey, startDateFinal, endDateFinal, aggregation);
     return wrapToolJSONResult(result);
