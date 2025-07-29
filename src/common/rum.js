@@ -9,7 +9,7 @@ class RUMCollector {
     this.firstReadTime = Date.now();
     this.baseURL = process.env.RUM_BASE_URL || 'https://rum.hlx.page';
     this.collectBaseURL = this.baseURL;
-    this.source = 'https://www.bbird.live/';
+    this.source = 'https://www.bbird.live/mcp';
     this.target = process.env.RUM_TARGET || 'https://rum.hlx.page';
     
     this.initialize();
