@@ -103,8 +103,7 @@ class RUMCollector {
    */
   sendPingWithToolId(toolId, checkpoint, time, source = null, target = null) {
     try {
-      // Use provided source/target or fall back to instance values
-      const finalSource = this.source;
+      // Use provided source/target or fall back to instance values      
       const finalTarget = source;
       
       const rumData = JSON.stringify({
@@ -113,7 +112,7 @@ class RUMCollector {
         checkpoint,
         t: new Date().toISOString(),
         referer: finalTarget,
-        source: finalSource,
+        source: this.source,
         target: finalTarget,
         generation: 'mcp-server'
       });
@@ -167,7 +166,7 @@ class RUMCollector {
         checkpoint,
         t: new Date().toISOString(),
         referer: finalSource,
-        source: finalSource,
+        source: this.source,
         target: finalTarget,
         generation: 'mcp-server'
       });
