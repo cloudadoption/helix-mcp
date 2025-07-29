@@ -11,7 +11,7 @@ Enable the `Custom Modes` toggle
 In your chat pane, click the Agent drop down and select `Add custom mode`
 
 - Name: AEM Admin
-- Model: Up to you, I've gotten best results, setting this to o3, but feel free to modify this and experiment as you see fit
+- Model: Up to you, I've gotten best results, setting this to claude-sonnet, but feel free to modify this and experiment as you see fit
 - All Tools:
   - ✅ Search
   - ❌ Edit
