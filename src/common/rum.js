@@ -112,7 +112,7 @@ class RUMCollector {
         id: toolId, // Use the specific tool ID
         checkpoint,
         t: new Date().toISOString(),
-        referer: target,
+        referer: finalTarget,
         source: finalSource,
         target: finalTarget,
         generation: 'mcp-server'
