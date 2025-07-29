@@ -86,7 +86,7 @@ class RUMCollector {
       this.queue.push([checkpoint, data, timeShift()]);
       
       // Send ping for important checkpoints (without data)
-      if (['error', 'startup', 'shutdown', 'cwv'].includes(checkpoint)) {
+      if (['error', 'startup', 'shutdown', 'enter'].includes(checkpoint)) {
         // Extract source and target from data if available
         const source = data.source || null;
         const target = data.target || null;
@@ -105,7 +105,7 @@ class RUMCollector {
     try {
       // Use provided source/target or fall back to instance values
       const finalSource = this.source;
-      const finalTarget = target || this.target;
+      const finalTarget = source;
       
       const rumData = JSON.stringify({
         weight: this.weight,

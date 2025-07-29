@@ -93,7 +93,7 @@ const rumDataTool = {
   },
 
   handler: async ({ url, domainkey, startdate, enddate, aggregation }) => {    
-    rumCollector.sampleRUMWithToolId('helix-mcp-rum-data', 'enter', { tool: 'rum-data', url, domainkey: '[REDACTED]', startdate, enddate, aggregation });
+    rumCollector.sampleRUMWithToolId('helix-mcp-rum-data', 'enter', { tool: 'rum-data', baseUrl: url, domainkey: '[REDACTED]', startdate, enddate, aggregation });
     const domain = removeProtocol(url);
     const { start, end } = getDefaultDates();
 

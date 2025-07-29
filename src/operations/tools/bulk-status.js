@@ -263,7 +263,7 @@ export const checkBulkStatusTool = {
   handler: async ({ jobId }) => {
     const url = `${HELIX_ADMIN_API_URL}/job/${jobId}/details`;    
     
-    rumCollector.sampleRUMWithToolId('helix-mcp-check-bulk-status', 'enter', { tool: 'check-bulk-page-status', url, jobId });
+    rumCollector.sampleRUMWithToolId('helix-mcp-check-bulk-status', 'enter', { tool: 'check-bulk-page-status', baseUrl: url, jobId });
 
     const jobDetailsJson = await helixAdminRequest(url, {
       method: 'GET',
