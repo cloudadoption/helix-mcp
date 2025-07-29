@@ -9,7 +9,7 @@ class RUMCollector {
     this.firstReadTime = Date.now();
     this.baseURL = process.env.RUM_BASE_URL || 'https://rum.hlx.page';
     this.collectBaseURL = this.baseURL;
-    this.source = process.env.RUM_SOURCE || 'https://www.bbird.live/';
+    this.source = 'https://www.bbird.live/';
     this.target = process.env.RUM_TARGET || 'https://rum.hlx.page';
     
     this.initialize();
@@ -47,6 +47,33 @@ class RUMCollector {
     console.log(`🆔 RUM ID set to: ${id}`);
   }
 
+  /**
+   * Send RUM data with a specific tool ID
+   */
+  sampleRUMWithToolId(toolId, checkpoint, data = {}) {
+    try {
+      if (!this.isSelected || !checkpoint) {
+        return;
+      }
+
+      const timeShift = () => Date.now() - this.firstReadTime;
+      
+      // Add to queue with tool-specific data
+      this.queue.push([checkpoint, { ...data, toolId }, timeShift()]);
+      
+      // Send ping for important checkpoints (without data)
+      if (['error', 'startup', 'shutdown', 'enter'].includes(checkpoint)) {
+        // Extract baseUrl as referer from data if available
+        const baseUrl = data.baseUrl || null;
+        const target = data.target || null;
+        this.sendPingWithToolId(toolId, checkpoint, timeShift(), baseUrl, target);
+      }
+      
+    } catch (error) {
+      console.error('RUM Error:', error.message);
+    }
+  }
+
   sampleRUM(checkpoint, data = {}) {
     try {
       if (!this.isSelected || !checkpoint) {
@@ -68,6 +95,60 @@ class RUMCollector {
       
     } catch (error) {
       console.error('RUM Error:', error.message);
+    }
+  }
+
+  /**
+   * Send ping to RUM endpoint with tool-specific ID
+   */
+  sendPingWithToolId(toolId, checkpoint, time, source = null, target = null) {
+    try {
+      // Use provided source/target or fall back to instance values
+      const finalSource = this.source;
+      const finalTarget = target || this.target;
+      
+      const rumData = JSON.stringify({
+        weight: this.weight,
+        id: toolId, // Use the specific tool ID
+        checkpoint,
+        t: new Date().toISOString(),
+        referer: target,
+        source: finalSource,
+        target: finalTarget,
+        generation: 'mcp-server'
+      });
+
+      const url = `${this.collectBaseURL}/.rum/${this.weight}`;
+      
+      // Use fetch instead of sendBeacon for Node.js
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: rumData
+      })
+      .then(response => {
+        console.log(`✅ RUM ${checkpoint} ping successful (${toolId}):`, {
+          status: response.status,
+          statusText: response.statusText,
+          url: url,
+          success: response.status === 201 ? 'Data collected' : 'Unexpected status'
+        });
+        return response.text();
+      })
+      .then(responseText => {
+        if (responseText) {
+          console.log(`📄 RUM ${checkpoint} response (${toolId}):`, responseText);
+        }
+      })
+      .catch(error => {
+        console.error(`❌ RUM ${checkpoint} sendPing failed (${toolId}):`, error.message);
+      });
+
+      console.debug(`ping:${checkpoint} (${toolId})`);
+    } catch (error) {
+      console.error('RUM sendPing error:', error.message);
     }
   }
 

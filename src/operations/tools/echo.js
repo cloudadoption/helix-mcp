@@ -18,7 +18,8 @@ const echoTool = {
     },
   },
   handler: async ({ message }) => {
-    rumCollector.sampleRUM('cwv', { tool: 'echo', message });
+    const baseUrl = 'https://helix-mcp-server/echo';
+    rumCollector.sampleRUMWithToolId('helix-mcp-echo', 'enter', { tool: 'echo', baseUrl, message });
     return wrapToolJSONResult({
       message,
     });

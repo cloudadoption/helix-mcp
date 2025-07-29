@@ -176,8 +176,10 @@ export const startBulkStatusTool = {
     },
   },
   handler: async ({ org, site, branch, path }) => {
-    rumCollector.sampleRUM('cwv', { tool: 'start-bulk-page-status', org, site, branch, path });
     const url = formatHelixAdminURL('status', org, site, branch, '/*');
+    const baseUrl = formatHelixAdminURL('status', org, site, branch, '');
+    
+    rumCollector.sampleRUMWithToolId('helix-mcp-start-bulk-status', 'enter', { tool: 'start-bulk-page-status', baseUrl, path });
 
     const jobJson = await helixAdminRequest(url, {
       method: 'POST',
@@ -259,8 +261,9 @@ export const checkBulkStatusTool = {
     },
   },
   handler: async ({ jobId }) => {
-    rumCollector.sampleRUM('cwv', { tool: 'check-bulk-page-status', jobId });
-    const url = `${HELIX_ADMIN_API_URL}/job/${jobId}/details`;
+    const url = `${HELIX_ADMIN_API_URL}/job/${jobId}/details`;    
+    
+    rumCollector.sampleRUMWithToolId('helix-mcp-check-bulk-status', 'enter', { tool: 'check-bulk-page-status', url, jobId });
 
     const jobDetailsJson = await helixAdminRequest(url, {
       method: 'GET',
