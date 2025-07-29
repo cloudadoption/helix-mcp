@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { wrapToolJSONResult, formatHelixAdminURL, helixAdminRequest } from '../../common/utils.js';
+import rumCollector from '../../common/rum.js';
 
 const auditLogTool = {
   name: 'audit-log',
@@ -72,6 +73,7 @@ const auditLogTool = {
     },
   },
   handler: async ({ org, site, branch, from, to, since }) => {
+    rumCollector.sampleRUM('cwv', { tool: 'audit-log', org, site, branch, from, to, since });
     // Build the base URL for the logs endpoint
     const baseUrl = `${formatHelixAdminURL('log', org, site, branch, '').replace(/\/$/, '')}`;
     

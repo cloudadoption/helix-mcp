@@ -12,6 +12,7 @@
 import { z } from 'zod';
 import { wrapToolJSONResult } from '../../common/utils.js';
 import { getAllBundles } from '../../common/bundles.js';
+import rumCollector from '../../common/rum.js';
 
 function removeProtocol(url) {
   return url.replace(/^https?:\/\//, '');
@@ -92,6 +93,7 @@ const rumDataTool = {
   },
 
   handler: async ({ url, domainkey, startdate, enddate, aggregation }) => {
+    rumCollector.sampleRUM('cwv', { tool: 'rum-data', url, domainkey: '[REDACTED]', startdate, enddate, aggregation });
     const domain = removeProtocol(url);
     const { start, end } = getDefaultDates();
 
