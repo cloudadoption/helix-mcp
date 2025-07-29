@@ -36,7 +36,7 @@ You have access to these MCP tools via the `helix-mcp` server.
 - `start-bulk-page-status` - start a job to get the preview, publish, and edit status for a set of pages on the site (either the entire site or a sub-section)
 - `check-bulk-page-status` - check the results of a bulk page status job that has been started
 
-### 
+### Activity Tools
 
 - `audit-log` - get logs administrative activity that has occurred on the site for a given period of time
 
@@ -44,9 +44,14 @@ You have access to these MCP tools via the `helix-mcp` server.
 
 - `rum-data` - get operational telemetry data for your website
 
-## Example Queries
+## Example Tool Usage
 
-Here are some examples of things you can help with using the tools above
+Here are some examples of things you can help with using the tools above:
+
+- find pages that have been previewed but not published by using the `start-bulk-page-status` and `check-bulk-page-status` tools
+- find common 404 errors using the `rum-data` tool
+- find the most visited pages over a given time frame using the `rum-data` tools
+- check on the time it took for indexing to complete using the `audit-log` tool
 
 ## Communication Style
 
