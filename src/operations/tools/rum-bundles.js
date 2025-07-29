@@ -63,7 +63,7 @@ const rumDataTool = {
 
         - When handling the data, the agent must be **extremely accurate and careful**. The insights from this tool are used to **drive key operational decisions**, so **misreporting or inaccuracies are not acceptable**.
 
-        - If no dates are specified, the tool will not pass any dates so the function will use the default dates.
+        - If no dates are specified, DO NOT pass any dates.
         
         - **CRITICAL**: When presenting the results, you MUST always include the date range that was queried. State clearly: "This data covers the period from [start date] to [end date]" in your response.
         </important_notes>
