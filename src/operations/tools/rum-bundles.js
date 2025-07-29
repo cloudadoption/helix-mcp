@@ -39,16 +39,16 @@ const rumDataTool = {
         The results provide performance insights across various aggregation types and are scoped to specific paths when applicable.
 
         - **aggregation**: Metric to aggregate by. Must be one of the following:
-            - "pageviews"
-            - "visits"
-            - "bounces"
-            - "organic"
-            - "earned"
-            - "lcp" (Largest Contentful Paint)
-            - "cls" (Cumulative Layout Shift)
-            - "inp" (Interaction to Next Paint)
-            - "ttfb" (Time to First Byte)
-            - "engagement" (custom engagement score)
+            - "pageviews" (returns the **sum** of pageviews)
+            - "visits" (returns the **sum** of visits)
+            - "bounces" (returns the **sum** of bounces)
+            - "organic" (returns the **sum** of organic traffic)
+            - "earned" (returns the **sum** of earned traffic)
+            - "lcp" (Largest Contentful Paint, returns the **p75** value)
+            - "cls" (Cumulative Layout Shift, returns the **p75** value)
+            - "inp" (Interaction to Next Paint, returns the **p75** value)
+            - "ttfb" (Time to First Byte, returns the **p75** value)
+            - "engagement" (custom engagement score, returns the **p75** value)
             - "errors" (pages and the errors on them)
 
         - **url**: Target URL to analyze. If the URL contains a non-empty path (e.g., "/product/123"), results are scoped to that specific path only.
