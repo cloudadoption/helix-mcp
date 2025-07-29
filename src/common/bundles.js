@@ -20,7 +20,8 @@ export async function loadBundles(url, date, domainkey) {
     return data;
   }
 
-  console.error('Bundles Not Found For Your Arguments')
+  console.error('Bundles Not Found For Your Arguments');
+  return []; // Return empty array instead of undefined
 }
 
 export function errorsFunc(bundle) {
@@ -94,6 +95,19 @@ export async function getDataChunks(url, domainkey, startdate, enddate) {
 export async function getStatistic(url, dataChunks, aggregation) {
   if (!dataChunks || !aggregation) {
     console.error('dataChunks, aggregation, and statistic are required.');
+    return [];
+  }
+
+  // Filter out any undefined or null data chunks and ensure proper structure
+  const validDataChunks = dataChunks.filter(chunk => {
+    return chunk && 
+           typeof chunk === 'object' && 
+           Array.isArray(chunk.rumBundles) && 
+           chunk.rumBundles.length > 0;
+  });
+  
+  if (validDataChunks.length === 0) {
+    return [];
   }
 
   let aggHandler;
@@ -124,13 +138,13 @@ export async function getStatistic(url, dataChunks, aggregation) {
   }
 
   // Preprocess metrics
-  dataChunks.forEach((chunk) => {
+  validDataChunks.forEach((chunk) => {
     // eslint-disable-next-line no-param-reassign
     chunk.rumBundles = chunk.rumBundles.map(utils.addCalculatedProps);
   });
 
   const d = new DataChunks();
-  d.load(dataChunks);
+  d.load(validDataChunks);
   d.filteredIn = filterBundlesByUrl(url, d.bundles);
   d.addSeries(aggregation, aggHandler);
   d.group((b) => b.url);

@@ -39,16 +39,16 @@ const rumDataTool = {
         The results provide performance insights across various aggregation types and are scoped to specific paths when applicable.
 
         - **aggregation**: Metric to aggregate by. Must be one of the following:
-            - "pageviews"
-            - "visits"
-            - "bounces"
-            - "organic"
-            - "earned"
-            - "lcp" (Largest Contentful Paint)
-            - "cls" (Cumulative Layout Shift)
-            - "inp" (Interaction to Next Paint)
-            - "ttfb" (Time to First Byte)
-            - "engagement" (custom engagement score)
+            - "pageviews" (returns the **sum** of pageviews)
+            - "visits" (returns the **sum** of visits)
+            - "bounces" (returns the **sum** of bounces)
+            - "organic" (returns the **sum** of organic traffic)
+            - "earned" (returns the **sum** of earned traffic)
+            - "lcp" (Largest Contentful Paint, returns the **p75** value)
+            - "cls" (Cumulative Layout Shift, returns the **p75** value)
+            - "inp" (Interaction to Next Paint, returns the **p75** value)
+            - "ttfb" (Time to First Byte, returns the **p75** value)
+            - "engagement" (custom engagement score, returns the **p75** value)
             - "errors" (pages and the errors on them)
 
         - **url**: Target URL to analyze. If the URL contains a non-empty path (e.g., "/product/123"), results are scoped to that specific path only.
@@ -62,6 +62,10 @@ const rumDataTool = {
         Example: convert \`https://www.example.com/page\` to \`www.example.com/page\`
 
         - When handling the data, the agent must be **extremely accurate and careful**. The insights from this tool are used to **drive key operational decisions**, so **misreporting or inaccuracies are not acceptable**.
+
+        - If no dates are specified, DO NOT pass any dates.
+        
+        - **CRITICAL**: When presenting the results, you MUST always include the date range that was queried. State clearly: "This data covers the period from [start date] to [end date]" in your response.
         </important_notes>
     `,
     inputSchema: {
@@ -95,11 +99,20 @@ const rumDataTool = {
     const domain = removeProtocol(url);
     const { start, end } = getDefaultDates();
 
-    const startDateFinal = startdate || start;
-    const endDateFinal = enddate || end;
+    // Default to one week ago to today if no dates are provided
+    const startDateFinal = startdate?.trim() || start;
+    const endDateFinal = enddate?.trim() || end;
 
     const result = await getAllBundles(domain, domainkey, startDateFinal, endDateFinal, aggregation);
-    return wrapToolJSONResult(result);
+    
+    // Include date range in the response
+    return wrapToolJSONResult({
+      ...result,
+      dateRange: {
+        start: startDateFinal,
+        end: endDateFinal
+      }
+    });
   }
 };
 
