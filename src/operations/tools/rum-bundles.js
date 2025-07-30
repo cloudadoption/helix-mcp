@@ -102,7 +102,7 @@ const rumDataTool = {
     const startDateFinal = startdate?.trim() || start;
     const endDateFinal = enddate?.trim() || end;
 
-    const result = await getAllBundles(domain, domainkey, startDateFinal, endDateFinal, aggregation);
+    const result = await getAllBundles(domain, domainkey || process.env.RUM_DOMAIN_KEY, startDateFinal, endDateFinal, aggregation);
     
     // Include date range in the response
     return wrapToolJSONResult({
