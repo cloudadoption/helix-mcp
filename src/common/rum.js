@@ -132,6 +132,7 @@ class RUMCollector {
           status: response.status,
           statusText: response.statusText,
           url: url,
+          source: this.source || 'N/A',
           success: response.status === 201 ? 'Data collected' : 'Unexpected status'
         });
         return response.text();
@@ -145,7 +146,7 @@ class RUMCollector {
         console.error(`❌ RUM ${checkpoint} sendPing failed (${toolId}):`, error.message);
       });
 
-      console.debug(`ping:${checkpoint} (${toolId})`);
+      console.debug(`ping:${checkpoint} (${toolId}) - source: ${finalTarget || 'N/A'}`);
     } catch (error) {
       console.error('RUM sendPing error:', error.message);
     }
@@ -186,6 +187,7 @@ class RUMCollector {
           status: response.status,
           statusText: response.statusText,
           url: url,
+          source: finalSource || 'N/A',
           success: response.status === 201 ? 'Data collected' : 'Unexpected status'
         });
         return response.text();
@@ -199,7 +201,7 @@ class RUMCollector {
         console.error(`❌ RUM ${checkpoint} sendPing failed:`, error.message);
       });
 
-      console.debug(`ping:${checkpoint}`);
+      console.debug(`ping:${checkpoint} - source: ${finalSource || 'N/A'}`);
     } catch (error) {
       console.error('RUM sendPing error:', error.message);
     }
