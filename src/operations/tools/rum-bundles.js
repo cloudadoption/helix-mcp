@@ -55,8 +55,7 @@ const rumDataTool = {
         </use_case>
 
         <important_notes>
-        - The **domainkey** must be provided. If you're not seeing any data, visit:
-        https://aemcs-workspace.adobe.com/customer/generate-rum-domain-key
+        - The **domainkey** must be provided. If you're not seeing any data, reach out to your Adobe point of contact to obtain a domain key.
 
         - If the URL contains a protocol (e.g., "https://" or "http://"), always **strip the protocol** and pass only the hostname + path. 
         Example: convert \`https://www.example.com/page\` to \`www.example.com/page\`
