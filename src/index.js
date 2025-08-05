@@ -19,15 +19,33 @@ registerTools(server);
 registerResources(server);
 registerResourceTemplates(server);
 
+function isServerlessEnvironment() {
+  // Check for common serverless environment indicators
+  return !!(
+    process.env.AWS_LAMBDA_FUNCTION_NAME ||        // AWS Lambda
+    process.env.CF_WORKERS ||                      // Cloudflare Workers
+    process.env.SERVERLESS ||                      // Generic serverless flag
+    process.env.WEBSITE_SITE_NAME ||               // Azure Functions
+    process.env.NODE_ENV === 'production'          // Explicit production check
+  );
+}
+
 async function runServer() {
-  const transport = new StdioServerTransport();
-  const httpTransport = new HttpServerTransport({
-    port: 8080,
-  });
-  await server.connect(transport);
-  await server.connect(httpTransport);
-  console.error("Helix MCP Server running on stdio");
-  console.error("Helix MCP Server running on http");
+  const isServerless = isServerlessEnvironment();
+  
+  if (isServerless) {
+    // Serverless: Only HTTP transport
+    const httpTransport = new HttpServerTransport({
+      port: process.env.PORT || 8080,  // Use PORT env var if available
+    });
+    await server.connect(httpTransport);
+    console.debug("Helix MCP Server running on HTTP (serverless mode)");
+  } else {
+    // Only stdio transport
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+    console.debug("Helix MCP Server running on stdio (local mode)");
+  }
 }
 
 runServer().catch((error) => {
