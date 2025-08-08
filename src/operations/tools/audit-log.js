@@ -63,6 +63,7 @@ const auditLogTool = {
       from: z.string().optional().describe('Start timestamp for filtering logs (ISO 8601 format)'),
       to: z.string().optional().describe('End timestamp for filtering logs (ISO 8601 format)'),
       since: z.string().regex(/^[0-9]+[hdm]$/).optional().describe('Relative time for filtering logs (e.g., "1h", "24h", "7d")'),
+      helixAdminApiToken: z.string().optional().describe('Helix Admin API token (optional, can be set via environment variable)'),
     },
     annotations: {
       readOnlyHint: true,
@@ -71,7 +72,7 @@ const auditLogTool = {
       openWorldHint: true,
     },
   },
-  handler: async ({ org, site, branch, from, to, since }) => {
+  handler: async ({ org, site, branch, from, to, since, helixAdminApiToken }) => {
     // Build the base URL for the logs endpoint
     const baseUrl = `${formatHelixAdminURL('log', org, site, branch, '').replace(/\/$/, '')}`;
     
@@ -83,7 +84,7 @@ const auditLogTool = {
     
     const url = queryParams.toString() ? `${baseUrl}?${queryParams.toString()}` : baseUrl;
 
-    const response = await helixAdminRequest(url);
+    const response = await helixAdminRequest(url, {}, helixAdminApiToken);
 
     return wrapToolJSONResult(response);
   },

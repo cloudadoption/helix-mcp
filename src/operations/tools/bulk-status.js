@@ -2,10 +2,10 @@ import { z } from 'zod';
 import { wrapToolJSONResult, formatHelixAdminURL, helixAdminRequest } from '../../common/utils.js';
 import { HELIX_ADMIN_API_URL } from '../../common/global.js';
 
-async function fetchHosts(org, site) {
+async function fetchHosts(org, site, apiToken = null) {
   try {
     const url = formatHelixAdminURL('status', org, site, 'main', '');
-    const json = await helixAdminRequest(url)
+    const json = await helixAdminRequest(url, {}, apiToken)
     return {
       live: new URL(json.live.url).host,
       preview: new URL(json.preview.url).host,
@@ -166,6 +166,7 @@ export const startBulkStatusTool = {
       site: z.string().describe('The site name'),
       branch: z.string().describe('The branch name').default('main'),
       path: z.string().describe('The start path of the pages to retrieve the status of').default('/'),
+      helixAdminApiToken: z.string().optional().describe('Helix Admin API token (optional, can be set via environment variable)'),
     },
     annotations: {
       readOnlyHint: false,
@@ -174,7 +175,7 @@ export const startBulkStatusTool = {
       openWorldHint: true,
     },
   },
-  handler: async ({ org, site, branch, path }) => {
+  handler: async ({ org, site, branch, path, helixAdminApiToken }) => {
     const url = formatHelixAdminURL('status', org, site, branch, '/*');
 
     const jobJson = await helixAdminRequest(url, {
@@ -185,7 +186,7 @@ export const startBulkStatusTool = {
         select: ['edit', 'preview', 'live'],
         forceAsync: true,
       }),
-    });
+    }, helixAdminApiToken);
 
     if (!jobJson.job || jobJson.job.state !== 'created') {
       throw new Error('Failed to create bulk status job');
@@ -248,6 +249,7 @@ export const checkBulkStatusTool = {
   `,
     inputSchema:{
       jobId: z.string().describe('The job ID of the bulk page status job'),
+      helixAdminApiToken: z.string().optional().describe('Helix Admin API token (optional, can be set via environment variable)'),
     },
     annotations: {
       readOnlyHint: true,
@@ -256,12 +258,12 @@ export const checkBulkStatusTool = {
       openWorldHint: true,
     },
   },
-  handler: async ({ jobId }) => {
+  handler: async ({ jobId, helixAdminApiToken }) => {
     const url = `${HELIX_ADMIN_API_URL}/job/${jobId}/details`;
 
     const jobDetailsJson = await helixAdminRequest(url, {
       method: 'GET',
-    });
+    }, helixAdminApiToken);
     const state = jobDetailsJson.state;
 
     if (state !== 'completed' && state !== 'stopped') {
@@ -277,7 +279,7 @@ export const checkBulkStatusTool = {
     const info = jobId.split('/');
     const org = info[0];
     const site = info[1];
-    const { live, preview } = await fetchHosts(org, site);
+    const { live, preview } = await fetchHosts(org, site, helixAdminApiToken);
 
     const data = processPageStatus(jobDetailsJson.data, preview, live);
 

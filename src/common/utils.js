@@ -15,15 +15,18 @@ async function parseResponseBody(response) {
 
 export async function daAdminRequest(
   url,
-  options = {}
+  options = {},
+  apiToken = null
 ) {
   const headers = {
     "User-Agent": USER_AGENT,
     ...options.headers,
   };
 
-  if (process.env.DA_ADMIN_API_TOKEN) {
-    headers["Authorization"] = `Bearer ${process.env.DA_ADMIN_API_TOKEN}`;
+  // Use provided token or fall back to environment variable
+  const token = apiToken || process.env.DA_ADMIN_API_TOKEN;
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   const init = {
@@ -43,14 +46,16 @@ export async function daAdminRequest(
   return responseBody;
 }
 
-export async function helixAdminRequest(url, options = {}) {
+export async function helixAdminRequest(url, options = {}, apiToken = null) {
   const headers = {
     "User-Agent": USER_AGENT,
     ...options.headers,
   };
 
-  if (process.env.HELIX_ADMIN_API_TOKEN) {
-    headers['X-Auth-Token'] = process.env.HELIX_ADMIN_API_TOKEN;
+  // Use provided token or fall back to environment variable
+  const token = apiToken || process.env.HELIX_ADMIN_API_TOKEN;
+  if (token) {
+    headers['X-Auth-Token'] = token;
   }
 
   const init = {
