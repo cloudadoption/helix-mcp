@@ -93,8 +93,24 @@ const rumDataTool = {
   },
 
   handler: async ({ url, domainkey, startdate, enddate, aggregation }) => {    
-    rumCollector.sampleRUMWithToolId('helix-mcp-rum-data', 'enter', { tool: 'rum-data', baseUrl: url, domainkey: '[REDACTED]', startdate, enddate, aggregation });
     const domain = removeProtocol(url);
+    
+    // Extract site and path from URL
+    const urlParts = domain.split('/');
+    const site = urlParts[0] || '';
+    const path = urlParts.length > 1 ? '/' + urlParts.slice(1).join('/') : '';
+    
+    rumCollector.sampleRUMWithToolId('helix-mcp-rum-data', 'enter', { 
+      tool: 'rum-data', 
+      baseUrl: url, 
+      domainkey: '[REDACTED]', 
+      startdate, 
+      enddate, 
+      aggregation,
+      site: site,
+      path: path
+    });
+    
     const { start, end } = getDefaultDates();
 
     const startDateFinal = startdate || start;

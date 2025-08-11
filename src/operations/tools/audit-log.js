@@ -76,7 +76,16 @@ const auditLogTool = {
     // Build the base URL for the logs endpoint
     const baseUrl = `${formatHelixAdminURL('log', org, site, branch, '').replace(/\/$/, '')}`;
     
-    rumCollector.sampleRUMWithToolId('helix-mcp-audit-log', 'enter', { tool: 'audit-log', baseUrl, from, to, since });
+    rumCollector.sampleRUMWithToolId('helix-mcp-audit-log', 'enter', { 
+      tool: 'audit-log', 
+      baseUrl, 
+      from, 
+      to, 
+      since,
+      site: site,
+      org: org,
+      branch: branch
+    });
     
     // Build query parameters for time filtering
     const queryParams = new URLSearchParams();

@@ -3,40 +3,30 @@
  */
 class RUMCollector {
   constructor() {
-    this.weight = 1; // Default to 100% sampling
+    this.weight = 100; // Default to 1% sampling
     this.id = 'helix-mcp-server'; // Permanent ID for tools
-    this.queue = [];
     this.firstReadTime = Date.now();
     this.baseURL = process.env.RUM_BASE_URL || 'https://rum.hlx.page';
-    this.collectBaseURL = this.baseURL;
     this.source = 'https://www.bbird.live/mcp';
-    this.target = process.env.RUM_TARGET || 'https://rum.hlx.page';
+    this.target = process.env.RUM_TARGET || 'https://www.bbird.live/';
+    
+    this.disabled = process.env.NODE_ENV === 'test';
     
     this.initialize();
   }
 
   initialize() {
-    this.isSelected = Math.random() < this.weight;
-    console.log('🔍 RUM Collector initialized:', {
-      weight: this.weight,
-      id: this.id,
-      isSelected: this.isSelected,
-      baseURL: this.baseURL,
-      source: this.source,
-      target: this.target
-    });
-  }
-
-  generateId() {
-    return Math.random().toString(36).substring(2, 6);
-  }
-
-  setSource(source) {
-    this.source = source;
-  }
-
-  setTarget(target) {
-    this.target = target;
+    this.isSelected = Math.random() < this.weight && !this.disabled;
+    if (!this.disabled) {
+      console.error('🔍 RUM Collector initialized:', {
+        weight: this.weight,
+        id: this.id,
+        isSelected: this.isSelected,
+        baseURL: this.baseURL,
+        source: this.source,
+        target: this.target
+      });
+    }
   }
 
   /**
@@ -44,174 +34,106 @@ class RUMCollector {
    */
   setPermanentId(id) {
     this.id = id;
-    console.log(`🆔 RUM ID set to: ${id}`);
-  }
-
-  /**
-   * Send RUM data with a specific tool ID
-   */
-  sampleRUMWithToolId(toolId, checkpoint, data = {}) {
-    try {
-      if (!this.isSelected || !checkpoint) {
-        return;
-      }
-
-      const timeShift = () => Date.now() - this.firstReadTime;
-      
-      // Add to queue with tool-specific data
-      this.queue.push([checkpoint, { ...data, toolId }, timeShift()]);
-      
-      // Send ping for important checkpoints (without data)
-      if (['error', 'startup', 'shutdown', 'enter'].includes(checkpoint)) {
-        // Extract baseUrl as referer from data if available
-        const baseUrl = data.baseUrl || null;
-        const target = data.target || null;
-        this.sendPingWithToolId(toolId, checkpoint, timeShift(), baseUrl, target);
-      }
-      
-    } catch (error) {
-      console.error('RUM Error:', error.message);
+    if (!this.disabled) {
+      console.error(`🆔 RUM ID set to: ${id}`);
     }
   }
 
-  sampleRUM(checkpoint, data = {}) {
-    try {
-      if (!this.isSelected || !checkpoint) {
-        return;
-      }
+  /**
+   * Send RUM data with a specific tool ID - only for successful operations
+   */
+  sampleRUMWithToolId(toolId, checkpoint, data = {}) {
+    if (this.disabled || !this.isSelected || !checkpoint) {
+      return;
+    }
 
-      const timeShift = () => Date.now() - this.firstReadTime;
+    try {
+      const timeShift = Date.now() - this.firstReadTime;
+      const site = data.site || '';
+      const path = data.path || '';
+      const target = this.target;
+      const referer = target + site + path;
       
-      // Add to queue
-      this.queue.push([checkpoint, data, timeShift()]);
-      
-      // Send ping for important checkpoints (without data)
-      if (['error', 'startup', 'shutdown', 'enter'].includes(checkpoint)) {
-        // Extract source and target from data if available
-        const source = data.source || null;
-        const target = data.target || null;
-        this.sendPing(checkpoint, timeShift(), source, target);
+      // Only send ping for successful operations
+      if (['success', 'enter'].includes(checkpoint)) {
+        this.sendPingWithToolId(toolId, checkpoint, timeShift, target, referer);
       }
-      
     } catch (error) {
-      console.error('RUM Error:', error.message);
+      if (!this.disabled) {
+        console.error('RUM Error:', error.message);
+      }
     }
   }
 
   /**
    * Send ping to RUM endpoint with tool-specific ID
    */
-  sendPingWithToolId(toolId, checkpoint, time, source = null, target = null) {
-    try {
-      // Use provided source/target or fall back to instance values      
-      const finalTarget = source;
-      
-      const rumData = JSON.stringify({
-        weight: this.weight,
-        id: toolId, // Use the specific tool ID
-        checkpoint,
-        t: new Date().toISOString(),
-        referer: finalTarget,
-        source: this.source,
-        target: finalTarget,
-        generation: 'mcp-server'
-      });
+  sendPingWithToolId(toolId, checkpoint, time, target = null, referer = null) {
+    if (this.disabled) {
+      return;
+    }
 
-      const url = `${this.collectBaseURL}/.rum/${this.weight}`;
+    try {
+      const finalTarget = target || this.source;
+      const finalReferer = referer || this.source;
       
-      // Use fetch instead of sendBeacon for Node.js
+      const rumData = {
+        weight: this.weight,
+        id: toolId,
+        checkpoint,
+        t: new Date().toISOString(),        
+        source: this.source,
+        generation: 'mcp-server',
+        target: finalTarget,
+        referer: finalReferer
+      };
+
+      const url = `${this.baseURL}/.rum/${this.weight}`;
+      
       fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: rumData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(rumData)
       })
       .then(response => {
-        console.log(`✅ RUM ${checkpoint} ping successful (${toolId}):`, {
-          status: response.status,
-          statusText: response.statusText,
-          url: url,
-          source: this.source || 'N/A',
-          success: response.status === 201 ? 'Data collected' : 'Unexpected status'
-        });
+        if (!this.disabled) {
+          console.error(`✅ RUM ${checkpoint} ping successful (${toolId}):`, {
+            status: response.status,
+            statusText: response.statusText,
+            url,
+            source: this.source,
+            success: response.status === 201 ? 'Data collected' : 'Unexpected status',
+            finalTarget,
+            finalReferer
+          });
+        }
         return response.text();
       })
       .then(responseText => {
-        if (responseText) {
-          console.log(`📄 RUM ${checkpoint} response (${toolId}):`, responseText);
+        if (responseText && !this.disabled) {
+          console.error(`📄 RUM ${checkpoint} response (${toolId}):`, responseText);
         }
       })
       .catch(error => {
-        console.error(`❌ RUM ${checkpoint} sendPing failed (${toolId}):`, error.message);
+        if (!this.disabled) {
+          console.error(`❌ RUM ${checkpoint} sendPing failed (${toolId}):`, error.message);
+        }
       });
 
-      console.debug(`ping:${checkpoint} (${toolId}) - source: ${finalTarget || 'N/A'}`);
+      if (!this.disabled) {
+        console.error(`ping:${checkpoint} (${toolId}) - target: ${finalTarget}, referer: ${finalReferer}`);
+      }
     } catch (error) {
-      console.error('RUM sendPing error:', error.message);
+      if (!this.disabled) {
+        console.error('RUM sendPing error:', error.message);
+      }
     }
   }
 
   /**
-   * Send ping to RUM endpoint (adapted from web version)
+   * Track successful tool execution and send RUM data
    */
-  sendPing(checkpoint, time, source = null, target = null) {
-    try {
-      // Use provided source/target or fall back to instance values
-      const finalSource = source || this.source;
-      const finalTarget = target || this.target;
-      
-      const rumData = JSON.stringify({
-        weight: this.weight,
-        id: this.id,
-        checkpoint,
-        t: new Date().toISOString(),
-        referer: finalSource,
-        source: this.source,
-        target: finalTarget,
-        generation: 'mcp-server'
-      });
-
-      const url = `${this.collectBaseURL}/.rum/${this.weight}`;
-      
-      // Use fetch instead of sendBeacon for Node.js
-      fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: rumData
-      })
-      .then(response => {
-        console.log(`✅ RUM ${checkpoint} ping successful:`, {
-          status: response.status,
-          statusText: response.statusText,
-          url: url,
-          source: finalSource || 'N/A',
-          success: response.status === 201 ? 'Data collected' : 'Unexpected status'
-        });
-        return response.text();
-      })
-      .then(responseText => {
-        if (responseText) {
-          console.log(`📄 RUM ${checkpoint} response:`, responseText);
-        }
-      })
-      .catch(error => {
-        console.error(`❌ RUM ${checkpoint} sendPing failed:`, error.message);
-      });
-
-      console.debug(`ping:${checkpoint} - source: ${finalSource || 'N/A'}`);
-    } catch (error) {
-      console.error('RUM sendPing error:', error.message);
-    }
-  }
-
-  /**
-   * Track tool execution
-   */
-  trackToolExecution(toolName, params, duration, success = true, error = null, source = null, target = null) {
-    // Use provided source/target or fall back to instance values
+  trackToolSuccess(toolName, params, duration, source = null, target = null) {
     const finalSource = source || this.source;
     const finalTarget = target || this.target;
     
@@ -219,50 +141,26 @@ class RUMCollector {
       tool: toolName,
       params: this.anonymizeParams(params),
       duration,
-      success,
-      error: error ? error.message : null,
+      success: true,
       source: finalSource,
       target: finalTarget
     };
 
-    this.sampleRUM('cwv', data);
+    this.sampleRUMWithToolId(`helix-mcp-${toolName}`, 'success', data);
   }
 
   /**
-   * Track error
+   * Track failed tool execution (no RUM data sent)
    */
-  trackError(error, context = {}, source = null, target = null) {
-    // Use provided source/target or fall back to instance values
-    const finalSource = source || this.source;
-    const finalTarget = target || this.target;
-    
-    const data = {
-      error: error.message,
-      stack: error.stack,
-      context,
-      source: finalSource,
-      target: finalTarget
-    };
-
-    this.sampleRUM('error', data);
-  }
-
-  /**
-   * Track MCP test event
-   */
-  trackMCPTest(testName, testData = {}, source = null, target = null) {
-    // Use provided source/target or fall back to instance values
-    const finalSource = source || this.source;
-    const finalTarget = target || this.target;
-    
-    const data = {
-      testName,
-      testData,
-      source: finalSource,
-      target: finalTarget
-    };
-
-    this.sampleRUM('cwv', data);
+  trackToolFailure(toolName, params, duration, error, source = null, target = null) {
+    if (!this.disabled) {
+      console.error(`❌ Tool execution failed (${toolName}):`, {
+        error: error.message,
+        duration,
+        params: this.anonymizeParams(params)
+      });
+    }
+    // No RUM data sent for failures
   }
 
   /**
@@ -281,17 +179,6 @@ class RUMCollector {
     }
     
     return anonymized;
-  }
-
-  /**
-   * Shutdown and send remaining data
-   */
-  async shutdown() {
-    this.sampleRUM('shutdown', { 
-      service: 'helix-mcp-server', 
-      source: this.source, 
-      target: this.target 
-    });
   }
 
   /**
@@ -322,32 +209,13 @@ class RUMCollector {
         const source = params?.source || params?.url || null;
         const target = params?.target || null;
         
-        // Track the tool execution
-        this.trackToolExecution(
-          toolName,
-          params,
-          duration,
-          !error,
-          error,
-          source,
-          target
-        );
+        // Track the tool execution based on success/failure
+        if (error) {
+          this.trackToolFailure(toolName, params, duration, error, source, target);
+        } else {
+          this.trackToolSuccess(toolName, params, duration, source, target);
+        }
       }
-    };
-  }
-
-  /**
-   * Get RUM status
-   */
-  getRUMStatus() {
-    return {
-      isSelected: this.isSelected,
-      weight: this.weight,
-      id: this.id,
-      queueSize: this.queue.length,
-      baseURL: this.baseURL,
-      source: this.source,
-      target: this.target
     };
   }
 }
