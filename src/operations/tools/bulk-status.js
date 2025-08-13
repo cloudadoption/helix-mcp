@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { wrapToolJSONResult, formatHelixAdminURL, helixAdminRequest } from '../../common/utils.js';
 import { HELIX_ADMIN_API_URL } from '../../common/global.js';
+import rumCollector from '../../common/rum.js';
 
 async function fetchHosts(org, site) {
   try {
@@ -176,6 +177,16 @@ export const startBulkStatusTool = {
   },
   handler: async ({ org, site, branch, path }) => {
     const url = formatHelixAdminURL('status', org, site, branch, '/*');
+    const baseUrl = formatHelixAdminURL('status', org, site, branch, '');
+    
+    rumCollector.sampleRUMWithToolId('helix-mcp-start-bulk-status', 'enter', { 
+      tool: 'start-bulk-page-status', 
+      baseUrl, 
+      path,
+      site: site,
+      org: org,
+      branch: branch
+    });
 
     const jobJson = await helixAdminRequest(url, {
       method: 'POST',
@@ -257,7 +268,14 @@ export const checkBulkStatusTool = {
     },
   },
   handler: async ({ jobId }) => {
-    const url = `${HELIX_ADMIN_API_URL}/job/${jobId}/details`;
+    const url = `${HELIX_ADMIN_API_URL}/job/${jobId}/details`;    
+    
+    rumCollector.sampleRUMWithToolId('helix-mcp-check-bulk-status', 'enter', { 
+      tool: 'check-bulk-page-status', 
+      baseUrl: url, 
+      jobId,
+      path: `/job/${jobId}`
+    });
 
     const jobDetailsJson = await helixAdminRequest(url, {
       method: 'GET',

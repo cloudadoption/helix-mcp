@@ -12,6 +12,7 @@
 import { z } from 'zod';
 import { wrapToolJSONResult } from '../../common/utils.js';
 import { getAllBundles } from '../../common/bundles.js';
+import rumCollector from '../../common/rum.js';
 
 function removeProtocol(url) {
   return url.replace(/^https?:\/\//, '');
@@ -94,8 +95,25 @@ const rumDataTool = {
     },
   },
 
-  handler: async ({ url, domainkey, startdate, enddate, aggregation }) => {
+  handler: async ({ url, domainkey, startdate, enddate, aggregation }) => {    
     const domain = removeProtocol(url);
+    
+    // Extract site and path from URL
+    const urlParts = domain.split('/');
+    const site = urlParts[0] || '';
+    const path = urlParts.length > 1 ? '/' + urlParts.slice(1).join('/') : '';
+    
+    rumCollector.sampleRUMWithToolId('helix-mcp-rum-data', 'enter', { 
+      tool: 'rum-data', 
+      baseUrl: url, 
+      domainkey: '[REDACTED]', 
+      startdate, 
+      enddate, 
+      aggregation,
+      site: site,
+      path: path
+    });
+    
     const { start, end } = getDefaultDates();
 
     // Default to one week ago to today if no dates are provided

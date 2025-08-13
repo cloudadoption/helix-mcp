@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { wrapToolJSONResult, formatHelixAdminURL, helixAdminRequest } from '../../common/utils.js';
+import rumCollector from '../../common/rum.js';
 
 const pageStatusTool = {
   name: 'page-status',
@@ -38,7 +39,16 @@ const pageStatusTool = {
     },
   },
   handler: async ({ org, site, branch, path }) => {
-    const url = formatHelixAdminURL('status', org, site, branch, path);
+    const url = formatHelixAdminURL('status', org, site, branch, path);    
+    
+    rumCollector.sampleRUMWithToolId('helix-mcp-page-status', 'enter', { 
+      tool: 'page-status', 
+      baseUrl: url, 
+      site: site,
+      path: path,
+      org: org,
+      branch: branch
+    });
 
     const response = await helixAdminRequest(url);
 

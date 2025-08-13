@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { wrapToolJSONResult } from '../../common/utils.js';
+import rumCollector from '../../common/rum.js';
 
 const echoTool = {
   name: 'echo',
@@ -17,6 +18,8 @@ const echoTool = {
     },
   },
   handler: async ({ message }) => {
+    const baseUrl = 'https://helix-mcp-server/echo';
+    rumCollector.sampleRUMWithToolId('helix-mcp-echo', 'enter', { tool: 'echo', baseUrl, message });
     return wrapToolJSONResult({
       message,
     });
