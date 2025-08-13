@@ -8,7 +8,7 @@ class RUMCollector {
     this.firstReadTime = Date.now();
     this.baseURL = process.env.RUM_BASE_URL || 'https://rum.hlx.page';
     this.source = 'https://www.bbird.live/mcp';
-    this.target = process.env.RUM_TARGET || 'https://www.bbird.live/';
+    this.referer = process.env.RUM_TARGET || 'https://www.bbird.live/';
     this.disabled = process.env.NODE_ENV === 'test';
   }
 
@@ -18,21 +18,16 @@ class RUMCollector {
    * Send RUM data with a specific tool ID - only for successful operations
    */
   sampleRUMWithToolId(toolId, checkpoint, data = {}) {
-    if (this.disabled || !checkpoint) {
+    if (this.disabled || !checkpoint || !['success', 'enter'].includes(checkpoint)) {
       return;
     }
 
     try {
       const timeShift = Date.now() - this.firstReadTime;
-      const site = data.site || '';
-      const path = data.path || '';
-      const target = this.target;
-      const referer = target + site + path;
+      const target = this.referer + (data.site || '') + (data.path || '');
+      const referer = this.referer + toolId;
       
-      // Only send ping for successful operations
-      if (['success', 'enter'].includes(checkpoint)) {
-        this.sendPingWithToolId(toolId, checkpoint, timeShift, target, referer);
-      }
+      this.sendPingWithToolId(toolId, checkpoint, timeShift, target, referer);
     } catch (error) {
       if (!this.disabled) {
         console.error('RUM Error:', error.message);
@@ -49,9 +44,6 @@ class RUMCollector {
     }
 
     try {
-      const finalTarget = target || this.source;
-      const finalReferer = referer || this.source;
-      
       const rumData = {
         weight: this.weight,
         id: toolId,
@@ -59,13 +51,11 @@ class RUMCollector {
         t: new Date().toISOString(),        
         source: this.source,
         generation: 'mcp-server',
-        target: finalTarget,
-        referer: finalReferer
+        target: target || this.source,
+        referer: referer || this.source
       };
 
-      const url = `${this.baseURL}/.rum/${this.weight}`;
-      
-      fetch(url, {
+      fetch(`${this.baseURL}/.rum/${this.weight}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(rumData)
@@ -74,7 +64,6 @@ class RUMCollector {
         if (!this.disabled && response.status !== 201) {
           console.error(`RUM ${checkpoint} failed: ${response.status}`);
         }
-        return response.text();
       })
       .catch(error => {
         if (!this.disabled) {
