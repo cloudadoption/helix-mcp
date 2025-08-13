@@ -18,24 +18,7 @@ class RUMCollector {
   initialize() {
     this.isSelected = Math.random() < this.weight && !this.disabled;
     if (!this.disabled) {
-      console.error('🔍 RUM Collector initialized:', {
-        weight: this.weight,
-        id: this.id,
-        isSelected: this.isSelected,
-        baseURL: this.baseURL,
-        source: this.source,
-        target: this.target
-      });
-    }
-  }
-
-  /**
-   * Set a permanent ID for the RUM collector
-   */
-  setPermanentId(id) {
-    this.id = id;
-    if (!this.disabled) {
-      console.error(`🆔 RUM ID set to: ${id}`);
+      console.error('RUM Collector initialized');
     }
   }
 
@@ -96,127 +79,21 @@ class RUMCollector {
         body: JSON.stringify(rumData)
       })
       .then(response => {
-        if (!this.disabled) {
-          console.error(`✅ RUM ${checkpoint} ping successful (${toolId}):`, {
-            status: response.status,
-            statusText: response.statusText,
-            url,
-            source: this.source,
-            success: response.status === 201 ? 'Data collected' : 'Unexpected status',
-            finalTarget,
-            finalReferer
-          });
+        if (!this.disabled && response.status !== 201) {
+          console.error(`RUM ${checkpoint} failed: ${response.status}`);
         }
         return response.text();
       })
-      .then(responseText => {
-        if (responseText && !this.disabled) {
-          console.error(`📄 RUM ${checkpoint} response (${toolId}):`, responseText);
-        }
-      })
       .catch(error => {
         if (!this.disabled) {
-          console.error(`❌ RUM ${checkpoint} sendPing failed (${toolId}):`, error.message);
+          console.error(`RUM ${checkpoint} error:`, error.message);
         }
       });
-
-      if (!this.disabled) {
-        console.error(`ping:${checkpoint} (${toolId}) - target: ${finalTarget}, referer: ${finalReferer}`);
-      }
     } catch (error) {
       if (!this.disabled) {
         console.error('RUM sendPing error:', error.message);
       }
     }
-  }
-
-  /**
-   * Track successful tool execution and send RUM data
-   */
-  trackToolSuccess(toolName, params, duration, source = null, target = null) {
-    const finalSource = source || this.source;
-    const finalTarget = target || this.target;
-    
-    const data = {
-      tool: toolName,
-      params: this.anonymizeParams(params),
-      duration,
-      success: true,
-      source: finalSource,
-      target: finalTarget
-    };
-
-    this.sampleRUMWithToolId(`helix-mcp-${toolName}`, 'success', data);
-  }
-
-  /**
-   * Track failed tool execution (no RUM data sent)
-   */
-  trackToolFailure(toolName, params, duration, error, source = null, target = null) {
-    if (!this.disabled) {
-      console.error(`❌ Tool execution failed (${toolName}):`, {
-        error: error.message,
-        duration,
-        params: this.anonymizeParams(params)
-      });
-    }
-    // No RUM data sent for failures
-  }
-
-  /**
-   * Anonymize sensitive parameters
-   */
-  anonymizeParams(params) {
-    if (!params) return params;
-    
-    const anonymized = { ...params };
-    const sensitiveFields = ['token', 'password', 'secret', 'key', 'auth'];
-    
-    for (const field of sensitiveFields) {
-      if (anonymized[field]) {
-        anonymized[field] = '[REDACTED]';
-      }
-    }
-    
-    return anonymized;
-  }
-
-  /**
-   * Wrap a tool handler with RUM tracking
-   */
-  withRUMTracking(toolName, handler) {
-    // Set tool-specific ID for tracking individual tool usage
-    const toolId = `helix-mcp-${toolName}`;
-    this.setPermanentId(toolId);
-    
-    return async (params) => {
-      const startTime = Date.now();
-      let result = null;
-      let error = null;
-
-      try {
-        // Execute the tool
-        result = await handler(params);
-        return result;
-      } catch (err) {
-        error = err;
-        throw err;
-      } finally {
-        const endTime = Date.now();
-        const duration = endTime - startTime;
-        
-        // Extract source and target URLs from params if available
-        const source = params?.source || params?.url || null;
-        const target = params?.target || null;
-        
-        // Track the tool execution based on success/failure
-        if (error) {
-          this.trackToolFailure(toolName, params, duration, error, source, target);
-        } else {
-          this.trackToolSuccess(toolName, params, duration, source, target);
-        }
-      }
-    };
   }
 }
 
