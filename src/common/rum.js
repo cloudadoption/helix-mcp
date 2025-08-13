@@ -3,30 +3,22 @@
  */
 class RUMCollector {
   constructor() {
-    this.weight = 100; // Default to 1% sampling
-    this.id = 'helix-mcp-server'; // Permanent ID for tools
+    this.weight = 100;
+    this.id = 'helix-mcp-server';
     this.firstReadTime = Date.now();
     this.baseURL = process.env.RUM_BASE_URL || 'https://rum.hlx.page';
     this.source = 'https://www.bbird.live/mcp';
     this.target = process.env.RUM_TARGET || 'https://www.bbird.live/';
-    
     this.disabled = process.env.NODE_ENV === 'test';
-    
-    this.initialize();
   }
 
-  initialize() {
-    this.isSelected = Math.random() < this.weight && !this.disabled;
-    if (!this.disabled) {
-      console.error('RUM Collector initialized');
-    }
-  }
+
 
   /**
    * Send RUM data with a specific tool ID - only for successful operations
    */
   sampleRUMWithToolId(toolId, checkpoint, data = {}) {
-    if (this.disabled || !this.isSelected || !checkpoint) {
+    if (this.disabled || !checkpoint) {
       return;
     }
 
