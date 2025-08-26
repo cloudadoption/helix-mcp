@@ -74,13 +74,13 @@ const auditLogTool = {
   handler: async ({ org, site, branch, from, to, since }) => {
     // Build the base URL for the logs endpoint
     const baseUrl = `${formatHelixAdminURL('log', org, site, branch, '').replace(/\/$/, '')}`;
-    
+
     // Build query parameters for time filtering
     const queryParams = new URLSearchParams();
     if (from) queryParams.append('from', from);
     if (to) queryParams.append('to', to);
     if (since) queryParams.append('since', since);
-    
+
     const url = queryParams.toString() ? `${baseUrl}?${queryParams.toString()}` : baseUrl;
 
     const response = await helixAdminRequest(url);
