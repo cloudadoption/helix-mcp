@@ -1,23 +1,22 @@
+// eslint-disable-next-line no-unused-vars
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import echoTool from './echo.js';
 import pageStatusTool from './page-status.js';
 import auditLogTool from './audit-log.js';
 import rumDataTool from './rum-bundles.js';
 import { startBulkStatusTool, checkBulkStatusTool } from './bulk-status.js';
 
-const tools = [ 
-  echoTool,
+const tools = [
   pageStatusTool,
   startBulkStatusTool,
   checkBulkStatusTool,
   auditLogTool,
-  rumDataTool
+  rumDataTool,
 ];
 
 /**
  * Register tools with the MCP server.
- * 
- * @param {McpServer} server 
+ *
+ * @param {McpServer} server
  */
 export default function registerTools(server) {
   tools.forEach((tool) => {

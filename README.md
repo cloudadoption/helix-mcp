@@ -1,9 +1,20 @@
 # Helix MCP Server
 
+[![CI](https://github.com/cloudadoption/helix-mcp/actions/workflows/main.yml/badge.svg)](https://github.com/cloudadoption/helix-mcp/actions/workflows/main.yml)
+
 An MCP (Model Context Protocol) server that provides tools for interacting with the Helix and Document Authoring Admin API. This server allows you to interact with Helix and DA APIs through MCP tools.
 
 ## Features
 
+## Development
+
+### Linting
+
+This project uses ESLint for code quality and consistency. The linting configuration is set up with modern JavaScript standards and best practices.
+
+**Available scripts:**
+- `npm run lint` - Check for linting issues
+- `npm run lint:fix` - Automatically fix linting issues where possible
 
 ## Cursor AI setup
 

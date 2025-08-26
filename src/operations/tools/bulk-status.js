@@ -5,12 +5,12 @@ import { HELIX_ADMIN_API_URL } from '../../common/global.js';
 async function fetchHosts(org, site) {
   try {
     const url = formatHelixAdminURL('status', org, site, 'main', '');
-    const json = await helixAdminRequest(url)
+    const json = await helixAdminRequest(url);
     return {
       live: new URL(json.live.url).host,
       preview: new URL(json.preview.url).host,
     };
-  } catch (error) {
+  } catch {
     return {
       live: null,
       preview: null,
@@ -38,7 +38,7 @@ function validatePath(path) {
       str += '/*';
     }
   }
-  
+
   return str;
 }
 
@@ -84,7 +84,7 @@ function buildSequenceStatus(edit, preview, publish) {
   } else {
     status = inSequence ? 'Current' : 'Pending changes';
   }
-  
+
   return status;
 }
 
@@ -115,7 +115,7 @@ function processPageStatus(data, preview, live) {
         previewLink: previewLastModified ? `https://${preview}${path}` : 'n/a',
         publishLastModified: publishLastModified ? toUTCDate(publishLastModified) : 'n/a',
         publishLink: publishLastModified ? `https://${live}${path}` : 'n/a',
-      }
+      };
     }
     return null;
   }).filter((resource) => resource !== null);

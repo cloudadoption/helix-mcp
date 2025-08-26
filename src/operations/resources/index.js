@@ -1,11 +1,11 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+// import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 const resources = [];
 
 /**
  * Register resources with the MCP server.
- * 
- * @param {McpServer} server 
+ *
+ * @param {McpServer} server
  */
 export default function registerResources(server) {
   resources.forEach((resource) => {

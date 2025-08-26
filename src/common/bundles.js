@@ -100,12 +100,12 @@ export async function getStatistic(url, dataChunks, aggregation) {
 
   // Filter out any undefined or null data chunks and ensure proper structure
   const validDataChunks = dataChunks.filter(chunk => {
-    return chunk && 
-           typeof chunk === 'object' && 
-           Array.isArray(chunk.rumBundles) && 
+    return chunk &&
+           typeof chunk === 'object' &&
+           Array.isArray(chunk.rumBundles) &&
            chunk.rumBundles.length > 0;
   });
-  
+
   if (validDataChunks.length === 0) {
     return [];
   }
@@ -139,7 +139,7 @@ export async function getStatistic(url, dataChunks, aggregation) {
 
   // Preprocess metrics
   validDataChunks.forEach((chunk) => {
-    // eslint-disable-next-line no-param-reassign
+
     chunk.rumBundles = chunk.rumBundles.map(utils.addCalculatedProps);
   });
 
@@ -158,10 +158,10 @@ export async function getStatistic(url, dataChunks, aggregation) {
     try {
       parsed = new URL(b.url).href;
     } catch {
-      // eslint-disable-next-line no-continue
+
       continue;
     }
-    // eslint-disable-next-line no-continue
+
     if (!b.visit) continue;
 
     visitMap[parsed] = (visitMap[parsed] || 0) + 1;
@@ -175,7 +175,7 @@ export async function getStatistic(url, dataChunks, aggregation) {
 
   for (const [urlL, metrics] of Object.entries(d.aggregates)) {
     const metric = metrics[aggregation];
-    // eslint-disable-next-line no-continue
+
     if (!metric || metric.count === 0) continue;
 
     const result = {
@@ -196,11 +196,11 @@ export async function getStatistic(url, dataChunks, aggregation) {
         try {
           parsedUrl = new URL(bundle.url).href;
         } catch {
-          // eslint-disable-next-line no-continue
+
           continue;
         }
 
-        // eslint-disable-next-line no-continue
+
         if (parsedUrl !== urlL) continue;
 
         for (const event of bundle.events || []) {
@@ -240,5 +240,5 @@ export async function getAllBundles(url, domainkey, startDate, endDate, aggregat
 
   const dataChunks = await getDataChunks(url, domainkey, startDate, endDate, aggregation);
   const stats = await getStatistic(url, dataChunks, aggregation);
-  return stats
+  return stats;
 }
