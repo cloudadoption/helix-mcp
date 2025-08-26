@@ -15,29 +15,6 @@ This project uses ESLint for code quality and consistency. The linting configura
 **Available scripts:**
 - `npm run lint` - Check for linting issues
 - `npm run lint:fix` - Automatically fix linting issues where possible
-- `npm run pre-commit` - Run linting (useful for pre-commit hooks)
-
-**Linting rules include:**
-- 2-space indentation
-- Single quotes for strings
-- Semicolons required
-- No trailing spaces
-- Consistent comma usage
-- Modern JavaScript practices (const over let, template literals, etc.)
-
-### Continuous Integration
-
-This project uses GitHub Actions for continuous integration:
-
-- **Linting**: Runs on every PR and push to main
-- **Auto-fix Check**: Ensures all auto-fixable issues are resolved
-- **Build Verification**: Confirms the project can be built successfully
-
-The CI workflow will:
-1. Install dependencies
-2. Run linting checks
-3. Attempt to auto-fix issues
-4. Fail if auto-fixable issues are found (ensuring code quality)
 
 ## Cursor AI setup
 
