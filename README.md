@@ -15,6 +15,8 @@ An MCP (Model Context Protocol) server that provides tools for interacting with 
 - **rum-data** - Queries Core Web Vitals and engagement metrics for sites or pages using operational telemetry data with various aggregation types.
 - **aem-docs-search** - Searches the AEM documentation at www.aem.live for specific topics, features, or guidance with optional category filtering.
 
+### Prompts
+
 ## Development
 
 ### Linting
