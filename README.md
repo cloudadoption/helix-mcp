@@ -6,6 +6,16 @@ An MCP (Model Context Protocol) server that provides tools for interacting with 
 
 ## Features
 
+### Tools
+
+- **page-status** - Retrieves the status of a single page including when it was last published, previewed, and edited, along with who performed those actions.
+- **start-bulk-status** - Initiates a bulk status check for multiple pages in a site, returning a job ID for tracking the asynchronous operation.
+- **check-bulk-status** - Checks the status of a bulk page status job and retrieves results for all pages including their publishing and preview status.
+- **audit-log** - Retrieves detailed audit logs from the AEM Edge Delivery Services repository showing user activities, system operations, and performance metrics.
+- **rum-data** - Queries Core Web Vitals and engagement metrics for sites or pages using operational telemetry data with various aggregation types.
+
+### Prompts
+
 ## Development
 
 ### Linting

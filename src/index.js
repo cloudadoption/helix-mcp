@@ -4,6 +4,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import registerTools from './operations/tools/index.js';
 import registerResources from './operations/resources/index.js';
 import registerResourceTemplates from './operations/resource-templates/index.js';
+import registerPrompts from './operations/prompts/index.js';
 
 import { VERSION } from './common/global.js';
 
@@ -17,6 +18,7 @@ const server = new McpServer(
 registerTools(server);
 registerResources(server);
 registerResourceTemplates(server);
+registerPrompts(server);
 
 async function runServer() {
   const transport = new StdioServerTransport();
