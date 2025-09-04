@@ -9,8 +9,33 @@
   },
   "scripts": {
     "start": "node src/index.js",
+    "start:http": "node src/http-server.js",
+    "dev": "PORT=3003 node src/http-server.js",
+    "test": "node src/tmp-mpc.js",
+    "test:http": "node test/test-http.js",
+    "test:protocol": "node test/test-mcp-protocol.js",
+    "test:context": "node test/test-context.js",
+    "test:406": "node test/test-406-status.js",
+    "test:non-406": "node test/test-non-406-scenarios.js",
+    "test:non-4xx": "node test/test-non-4xx-status.js",
+    "test:tools": "node test/test-tools-endpoint.js",
+    "test:json-rpc": "node test/test-json-rpc-simple.js",
+    "test:json-rpc-full": "node test/test-json-rpc.js",
+    "test:session": "node test/test-session-management.js",
+    "example:with-tokens": "node test/examples/with-api-tokens.js",
     "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix"
+    "lint:fix": "eslint src/ --fix",
+    "build": "echo 'No build step required for Cloudflare Workers'",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:production": "wrangler deploy --env production",
+    "deploy:adobe": "wrangler deploy --account-id e1e360001bae52605e88f2b2d0e82d27",
+    "deploy:adobe:staging": "wrangler deploy --env staging --account-id e1e360001bae52605e88f2b2d0e82d27",
+    "deploy:adobe:production": "wrangler deploy --env production --account-id e1e360001bae52605e88f2b2d0e82d27",
+    "deploy:franklin": "wrangler deploy --account-id 852dfa4ae1b0d579df29be65b986c101",
+    "deploy:franklin:staging": "wrangler deploy --env staging --account-id 852dfa4ae1b0d579df29be65b986c101",
+    "deploy:franklin:production": "wrangler deploy --env production --account-id 852dfa4ae1b0d579df29be65b986c101",
+    "dev:worker": "wrangler dev --port 8787"
   },
   "dependencies": {
     "@adobe/rum-distiller": "^1.17.0",
@@ -24,6 +49,7 @@
     "@eslint/js": "^9.34.0",
     "@modelcontextprotocol/inspector": "^0.16.1",
     "eslint": "^9.34.0",
-    "globals": "^16.3.0"
+    "globals": "^16.3.0",
+    "wrangler": "^3.0.0"
   }
 }
