@@ -50,6 +50,6 @@
     "@modelcontextprotocol/inspector": "^0.16.1",
     "eslint": "^9.34.0",
     "globals": "^16.3.0",
-    "wrangler": "^3.0.0"
+    "wrangler": "^4.0.0"
   }
 }
