@@ -4,6 +4,7 @@ import pageStatusTool from './page-status.js';
 import auditLogTool from './audit-log.js';
 import rumDataTool from './rum-bundles.js';
 import { startBulkStatusTool, checkBulkStatusTool } from './bulk-status.js';
+import aemDocsSearchTool from './aem-docs-search.js';
 
 const tools = [
   pageStatusTool,
@@ -11,6 +12,7 @@ const tools = [
   checkBulkStatusTool,
   auditLogTool,
   rumDataTool,
+  aemDocsSearchTool,
 ];
 
 /**
