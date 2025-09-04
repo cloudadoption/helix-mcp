@@ -23,8 +23,6 @@ An MCP (Model Context Protocol) server that provides tools for interacting with 
 
 ## Cursor AI Setup
 
-[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=helix-mcp-server&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyJAbW9kZWxjb250ZXh0cHJvdG9jb2wvY2xpZW50LWh0dHAiLCJodHRwczovL2hlbGl4LW1jcC1zZXJ2ZXIuYWVtLXBvYy1sYWIud29ya2Vycy5kZXYiXSwiZW52Ijp7IkRBX0FETUlOX0FQSV9UT0tFTiI6InlvdXJfYXBpX3Rva2VuX2hlcmUiLCJIRUxJWF9BRE1JTl9BUElfVE9LRU4iOiJ5b3VyX2FwaV90b2tlbl9oZXJlIiwiUlVNX0RPTUFJTl9LRVkiOiJ5b3VyX3J1bV9kb21haW5fa2V5In19Cg==)
-
 To use this MCP server with Cursor AI, go to `Cursor Settings`, `MCP` and add a new server with the following configuration:
 
 ```json
