@@ -28,11 +28,11 @@ function findResults(query, indexDocs) {
 
 async function indexDataToResult(match) {
 
-  let markdownContent;
-  const fullUrl = `https://www.aem.live${match.path.endsWith('/') ? `${match.path}index.md` : `${match.path}.md`}`;
+  let markup;
+  const fullUrl = `https://www.aem.live${match.path}`;
   try {
     const resp = await fetch(fullUrl);
-    markdownContent = await resp.text();
+    markup = await resp.text();
   } catch {
     // nothing
   }
@@ -41,7 +41,7 @@ async function indexDataToResult(match) {
     title: match.title,
     description: match.description,
     url: `https://www.aem.live${match.path}`,
-    content: markdownContent || match.content,
+    content: markup || match.content,
     lastModified: match.lastModified,
   };
 }
