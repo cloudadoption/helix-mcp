@@ -33,8 +33,8 @@ To use this MCP server with Cursor AI, go to `Cursor Settings`, `MCP` and add a 
     "helix-mcp-server": {
       "command": "npx",
       "args": [
-        "@modelcontextprotocol/client-http",
-        "https://helix-mcp-server.aem-poc-lab.workers.dev"
+        "mcp-remote",
+        "https://helix-mcp-server.aem-poc-lab.workers.dev/sse"
       ],
       "env": {
         "DA_ADMIN_API_TOKEN": "your_api_token_here",
@@ -59,8 +59,8 @@ To use this MCP server with VS Code and GitHub Copilot:
     "helix-mcp-server": {
       "command": "npx",
       "args": [
-        "@modelcontextprotocol/client-http",
-        "https://helix-mcp-server.aem-poc-lab.workers.dev"
+        "mcp-remote",
+        "https://helix-mcp-server.aem-poc-lab.workers.dev/sse"
       ],
       "env": {
         "DA_ADMIN_API_TOKEN": "your_api_token_here",
