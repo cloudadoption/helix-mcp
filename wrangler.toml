@@ -1,0 +1,20 @@
+name = "helix-mcp-server"
+main = "src/worker.js"
+compatibility_date = "2025-08-08"
+compatibility_flags = ["nodejs_compat"]
+
+# Choose your account ID here:
+account_id = "ac7ee4615628005dc5ba0a22f0aae2a6"
+
+[env.production]
+name = "helix-mcp"
+
+[env.staging]
+name = "helix-mcp-staging"
+
+[build]
+command = "echo 'No build step required'"
+
+[[rules]]
+type = "ESModule"
+globs = ["**/*.js"]

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import registerTools from './operations/tools/index.js';
 import registerResources from './operations/resources/index.js';
 import registerResourceTemplates from './operations/resource-templates/index.js';
@@ -21,9 +22,20 @@ registerResourceTemplates(server);
 registerPrompts(server);
 
 async function runServer() {
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-  console.error('Helix MCP Server running on stdio');
+  const transportType = process.env.TRANSPORT_TYPE || 'stdio';
+
+  if (transportType === 'http') {
+    const port = parseInt(process.env.PORT || '3000', 10);
+    const transport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: () => crypto.randomUUID(),
+    });
+    await server.connect(transport);
+    console.error(`Helix MCP Server running on HTTP at port ${port}`);
+  } else {
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+    console.error('Helix MCP Server running on stdio');
+  }
 }
 
 runServer().catch((error) => {

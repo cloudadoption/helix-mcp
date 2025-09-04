@@ -29,6 +29,7 @@ const pageStatusTool = {
       site: z.string().describe('The site name'),
       branch: z.string().describe('The branch name').default('main'),
       path: z.string().describe('The path of the page'),
+      helixAdminApiToken: z.string().optional().describe('Helix Admin API token (optional, can be set via environment variable)'),
     },
     annotations: {
       readOnlyHint: true,
@@ -37,10 +38,10 @@ const pageStatusTool = {
       openWorldHint: true,
     },
   },
-  handler: async ({ org, site, branch, path }) => {
+  handler: async ({ org, site, branch, path, helixAdminApiToken }) => {
     const url = formatHelixAdminURL('status', org, site, branch, path);
 
-    const response = await helixAdminRequest(url);
+    const response = await helixAdminRequest(url, {}, helixAdminApiToken);
 
     return wrapToolJSONResult(response);
   },
