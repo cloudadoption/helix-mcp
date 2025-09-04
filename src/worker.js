@@ -1,4 +1,4 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import registerTools from './operations/tools/index.js';
 import registerResources from './operations/resources/index.js';
 import registerResourceTemplates from './operations/resource-templates/index.js';
@@ -16,24 +16,24 @@ registerResources(server);
 registerResourceTemplates(server);
 
 // Simple message handler for Cloudflare Workers
-async function handleMcpMessage(message, headers) {
+async function handleMcpMessage(message, _headers) {
   // Handle initialize
   if (message.method === 'initialize') {
     return {
-      jsonrpc: "2.0",
+      jsonrpc: '2.0',
       result: {
-        protocolVersion: "2025-06-18",
+        protocolVersion: '2025-06-18',
         capabilities: {
           tools: {
-            listChanged: true
-          }
+            listChanged: true,
+          },
         },
         serverInfo: {
-          name: "helix-mcp-server",
-          version: VERSION
-        }
+          name: 'helix-mcp-server',
+          version: VERSION,
+        },
       },
-      id: message.id
+      id: message.id,
     };
   }
 
@@ -42,150 +42,150 @@ async function handleMcpMessage(message, headers) {
     // Define the tools manually since we can't access server.tools directly
     const tools = [
       {
-        name: "echo",
-        description: "Echo a message",
+        name: 'echo',
+        description: 'Echo a message',
         inputSchema: {
-          type: "object",
+          type: 'object',
           properties: {
             message: {
-              type: "string",
-              description: "The message to echo"
-            }
+              type: 'string',
+              description: 'The message to echo',
+            },
           },
-          required: ["message"]
-        }
+          required: ['message'],
+        },
       },
       {
-        name: "page-status",
-        description: "Get the status of a single page",
+        name: 'page-status',
+        description: 'Get the status of a single page',
         inputSchema: {
-          type: "object",
+          type: 'object',
           properties: {
-            org: { type: "string" },
-            site: { type: "string" },
-            path: { type: "string" },
-            branch: { type: "string", default: "main" }
+            org: { type: 'string' },
+            site: { type: 'string' },
+            path: { type: 'string' },
+            branch: { type: 'string', default: 'main' },
           },
-          required: ["org", "site", "path"]
-        }
+          required: ['org', 'site', 'path'],
+        },
       },
       {
-        name: "start-bulk-page-status",
-        description: "Start a bulk page status job",
+        name: 'start-bulk-page-status',
+        description: 'Start a bulk page status job',
         inputSchema: {
-          type: "object",
+          type: 'object',
           properties: {
-            org: { type: "string" },
-            site: { type: "string" },
-            branch: { type: "string", default: "main" },
-            path: { type: "string", default: "/" }
+            org: { type: 'string' },
+            site: { type: 'string' },
+            branch: { type: 'string', default: 'main' },
+            path: { type: 'string', default: '/' },
           },
-          required: ["org", "site"]
-        }
+          required: ['org', 'site'],
+        },
       },
       {
-        name: "check-bulk-page-status",
-        description: "Check the status of a bulk page status job",
+        name: 'check-bulk-page-status',
+        description: 'Check the status of a bulk page status job',
         inputSchema: {
-          type: "object",
+          type: 'object',
           properties: {
-            jobId: { type: "string" }
+            jobId: { type: 'string' },
           },
-          required: ["jobId"]
-        }
+          required: ['jobId'],
+        },
       },
       {
-        name: "audit-log",
-        description: "Get audit logs",
+        name: 'audit-log',
+        description: 'Get audit logs',
         inputSchema: {
-          type: "object",
+          type: 'object',
           properties: {
-            org: { type: "string" },
-            site: { type: "string" },
-            branch: { type: "string", default: "main" },
-            from: { type: "string" },
-            to: { type: "string" },
-            since: { type: "string" }
+            org: { type: 'string' },
+            site: { type: 'string' },
+            branch: { type: 'string', default: 'main' },
+            from: { type: 'string' },
+            to: { type: 'string' },
+            since: { type: 'string' },
           },
-          required: ["org", "site"]
-        }
+          required: ['org', 'site'],
+        },
       },
       {
-        name: "rum-data",
-        description: "Get RUM data",
+        name: 'rum-data',
+        description: 'Get RUM data',
         inputSchema: {
-          type: "object",
+          type: 'object',
           properties: {
-            url: { type: "string" },
-            domainkey: { type: "string" },
-            startdate: { type: "string" },
-            enddate: { type: "string" },
-            aggregation: { type: "string" }
+            url: { type: 'string' },
+            domainkey: { type: 'string' },
+            startdate: { type: 'string' },
+            enddate: { type: 'string' },
+            aggregation: { type: 'string' },
           },
-          required: ["url", "domainkey", "aggregation"]
-        }
-      }
+          required: ['url', 'domainkey', 'aggregation'],
+        },
+      },
     ];
 
     return {
-      jsonrpc: "2.0",
+      jsonrpc: '2.0',
       result: {
-        tools
+        tools,
       },
-      id: message.id
+      id: message.id,
     };
   }
 
   // Handle tools/call
   if (message.method === 'tools/call') {
     const { name, arguments: args } = message.params;
-    
+
     // Handle specific tools
     if (name === 'echo') {
       const { message: echoMessage } = args;
       return {
-        jsonrpc: "2.0",
+        jsonrpc: '2.0',
         result: {
           content: [
             {
-              type: "text",
-              text: echoMessage
-            }
-          ]
+              type: 'text',
+              text: echoMessage,
+            },
+          ],
         },
-        id: message.id
+        id: message.id,
       };
     }
-    
+
     // For other tools, return a simple response
     return {
-      jsonrpc: "2.0",
+      jsonrpc: '2.0',
       result: {
         content: [
           {
-            type: "text",
-            text: `Tool '${name}' called with arguments: ${JSON.stringify(args)}`
-          }
-        ]
+            type: 'text',
+            text: `Tool '${name}' called with arguments: ${JSON.stringify(args)}`,
+          },
+        ],
       },
-      id: message.id
+      id: message.id,
     };
   }
 
   // Handle other methods
   return {
-    jsonrpc: "2.0",
+    jsonrpc: '2.0',
     error: {
       code: -32601,
-      message: `Method '${message.method}' not found`
+      message: `Method '${message.method}' not found`,
     },
-    id: message.id
+    id: message.id,
   };
 }
 
 // Export the fetch handler for Cloudflare Workers
 export default {
-  async fetch(request, env, ctx) {
+  async fetch(request, _env, _ctx) {
     try {
       // Handle CORS preflight requests
       if (request.method === 'OPTIONS') {
@@ -200,12 +200,12 @@ export default {
       }
 
       const url = new URL(request.url);
-      
+
       // Handle server reset endpoint (for testing)
       if (request.method === 'POST' && url.pathname === '/reset') {
-        return new Response(JSON.stringify({ 
-          status: 'ok', 
-          message: 'Server state reset successfully' 
+        return new Response(JSON.stringify({
+          status: 'ok',
+          message: 'Server state reset successfully',
         }), {
           status: 200,
           headers: {
@@ -223,14 +223,14 @@ export default {
         let message;
         try {
           message = JSON.parse(body);
-        } catch (error) {
+        } catch {
           return new Response(JSON.stringify({
-            jsonrpc: "2.0",
+            jsonrpc: '2.0',
             error: {
               code: -32700,
-              message: "Parse error"
+              message: 'Parse error',
             },
-            id: null
+            id: null,
           }), {
             status: 400,
             headers: {
@@ -246,12 +246,12 @@ export default {
         const protocolVersion = request.headers.get('MCP-Protocol-Version') || request.headers.get('mcp-protocol-version');
         if (!protocolVersion) {
           return new Response(JSON.stringify({
-            jsonrpc: "2.0",
+            jsonrpc: '2.0',
             error: {
               code: -32600,
-              message: "Missing MCP-Protocol-Version header"
+              message: 'Missing MCP-Protocol-Version header',
             },
-            id: null
+            id: null,
           }), {
             status: 406,
             headers: {
@@ -279,12 +279,12 @@ export default {
         } catch (error) {
           console.error('Error processing message:', error);
           return new Response(JSON.stringify({
-            jsonrpc: "2.0",
+            jsonrpc: '2.0',
             error: {
               code: -32603,
-              message: "Internal error: " + error.message
+              message: `Internal error: ${error.message}`,
             },
-            id: message.id || null
+            id: message.id || null,
           }), {
             status: 500,
             headers: {
@@ -313,12 +313,12 @@ export default {
       }
 
       return new Response(JSON.stringify({
-        jsonrpc: "2.0",
+        jsonrpc: '2.0',
         error: {
           code: -32601,
-          message: "Method not found"
+          message: 'Method not found',
         },
-        id: null
+        id: null,
       }), {
         status: 405,
         headers: {
@@ -331,18 +331,17 @@ export default {
 
     } catch (error) {
       console.error('Error handling request:', error);
-      return new Response(JSON.stringify({ 
-        jsonrpc: "2.0",
+      return new Response(JSON.stringify({
+        jsonrpc: '2.0',
         error: {
           code: -32603,
-          message: "Internal error"
+          message: 'Internal error',
         },
-        id: null
+        id: null,
       }), {
         status: 500,
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
         },
       });
     }
