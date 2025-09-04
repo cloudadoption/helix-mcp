@@ -16,7 +16,7 @@ async function parseResponseBody(response) {
 export async function daAdminRequest(
   url,
   options = {},
-  apiToken = null
+  apiToken = null,
 ) {
   const headers = {
     'User-Agent': USER_AGENT,
