@@ -4,7 +4,7 @@ compatibility_date = "2025-08-08"
 compatibility_flags = ["nodejs_compat"]
 
 # Choose your account ID here:
-account_id = "852dfa4ae1b0d579df29be65b986c101"
+account_id = "ac7ee4615628005dc5ba0a22f0aae2a6"
 
 [env.production]
 name = "helix-mcp"
