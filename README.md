@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/cloudadoption/helix-mcp/actions/workflows/main.yml/badge.svg)](https://github.com/cloudadoption/helix-mcp/actions/workflows/main.yml)
 
-An MCP (Model Context Protocol) server that provides tools for interacting with the Helix and Document Authoring Admin API. This server allows you to interact with Helix and DA APIs through MCP tools.
+An MCP (Model Context Protocol) server that provides tools to enable developers and administators of sites deployed with AEM Edge Delivery Services and Document Authoring.
 
 ## Features
 
@@ -29,7 +29,9 @@ This project uses ESLint for code quality and consistency. The linting configura
 - `npm run lint` - Check for linting issues
 - `npm run lint:fix` - Automatically fix linting issues where possible
 
-## Cursor AI setup
+## Usage
+
+### Cursor AI setup
 
 [![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=helix-mcp-server&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyJodHRwczovL2dpdGh1Yi5jb20vY2xvdWRhZG9wdGlvbi9oZWxpeC1tY3AiXSwgImVudiI6IHsgIkRBX0FETUlOX0FQSV9UT0tFTiI6ICJ5b3VyX2FwaV90b2tlbl9oZXJlIiwgIkhFTElYX0FETUlOX0FQSV9UT0tFTiI6ICJ5b3VyX2FwaV90b2tlbl9oZXJlIiwgIlJVTV9ET01BSU5fS0VZIjogInlvdXJfcnVtX2RvbWFpbl9rZXkifX0=)
 
@@ -49,7 +51,7 @@ To use this MCP server with Cursor AI, go to `Cursor Settings`, `MCP` and a `New
 }
 ```
 
-## VS Code with GitHub Copilot setup
+### VS Code with GitHub Copilot setup
 
 To use this MCP server with VS Code and GitHub Copilot:
 
@@ -81,7 +83,6 @@ To use this MCP server with VS Code and GitHub Copilot:
 5. **Verify installation**: Open the Command Palette (Cmd/Ctrl + Shift + P) and type "MCP" to see available MCP commands.
 
 **Note**: Replace `your_api_token_here` with your actual API tokens. You can obtain the Helix admin token by following these instructions: [https://www.aem.live/docs/admin-apikeys](https://www.aem.live/docs/admin-apikeys) OR by logging into [admin.hlx.page/login](https://admin.hlx.page/login) and capturing the `auth_token` from the cookie.
-
 
 ## Contributing
 
