@@ -109,7 +109,7 @@ const BLOCK_COLLECTION = [
 export const blockListTool = {
   name: 'block-list',
   config: {
-    title: 'AEM Block Collection List',
+    title: 'AEM Block Collection - BlockList',
     description: `
     <use_case>
       Use this tool to retrieve a list of all available blocks in the AEM block collection. The results will include 
@@ -144,7 +144,7 @@ export const blockListTool = {
 export const blockDetailsTool = {
   name: 'block-details',
   config: {
-    title: 'Block Details',
+    title: 'AEM Block Collection - Block Details',
     description: `
     <use_case>
       Use this tool to retrieve detailed information about a specific block in the AEM block collection. The results 
