@@ -326,9 +326,9 @@ async function handleMcpMessage(message, _headers, env = {}) {
         inputSchema: {
           type: 'object',
           properties: {
-            blockName: { 
+            blockName: {
               type: 'string',
-              description: 'The name of the block to retrieve details for'
+              description: 'The name of the block to retrieve details for',
             },
           },
           required: ['blockName'],
@@ -614,7 +614,7 @@ async function handleMcpMessage(message, _headers, env = {}) {
       // Handle block-details tool
       if (name === 'block-details') {
         const { blockName } = args;
-        
+
         try {
           const result = await blockDetailsTool.handler({ blockName });
           return {
