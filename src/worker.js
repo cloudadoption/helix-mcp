@@ -2,6 +2,9 @@
 
 const VERSION = '0.0.1';
 
+// Import block collection data and tools
+import { blockListTool, blockDetailsTool } from './operations/tools/block-collection.js';
+
 // Worker-compatible utility functions
 async function parseResponseBody(response) {
   const contentType = response.headers.get('content-type');
@@ -310,22 +313,23 @@ async function handleMcpMessage(message, _headers, env = {}) {
       },
       {
         name: 'block-list',
-        description: 'Get a list of available blocks',
+        description: 'Retrieve a list of all available blocks in the AEM block collection',
         inputSchema: {
           type: 'object',
-          properties: {
-            random_string: { type: 'string', description: 'Dummy parameter for no-parameter tools' },
-          },
-          required: ['random_string'],
+          properties: {},
+          required: [],
         },
       },
       {
         name: 'block-details',
-        description: 'Get details for a specific block',
+        description: 'Retrieve detailed information about a specific block in the AEM block collection',
         inputSchema: {
           type: 'object',
           properties: {
-            blockName: { type: 'string' },
+            blockName: { 
+              type: 'string',
+              description: 'The name of the block to retrieve details for'
+            },
           },
           required: ['blockName'],
         },
@@ -589,25 +593,10 @@ async function handleMcpMessage(message, _headers, env = {}) {
       // Handle block-list tool
       if (name === 'block-list') {
         try {
-          // This is a placeholder - the actual implementation would fetch from a block registry
-          const blocks = [
-            'header',
-            'hero',
-            'cards',
-            'columns',
-            'fragment',
-            'accordion',
-            'carousel',
-            'tabs',
-            'quote',
-            'embed',
-          ];
-
+          const result = await blockListTool.handler();
           return {
             jsonrpc: '2.0',
-            result: workerWrapToolJSONResult({
-              blocks: blocks.map(name => ({ name, description: `${name} block` })),
-            }),
+            result,
             id: message.id,
           };
         } catch (error) {
@@ -625,24 +614,12 @@ async function handleMcpMessage(message, _headers, env = {}) {
       // Handle block-details tool
       if (name === 'block-details') {
         const { blockName } = args;
-
+        
         try {
-          // This is a placeholder - the actual implementation would fetch from a block registry
-          const blockDetails = {
-            name: blockName,
-            description: `Details for ${blockName} block`,
-            documentation: `https://www.aem.live/developer/block-collection/${blockName}`,
-            code: `// ${blockName} block implementation would be here`,
-            metadata: {
-              category: 'content',
-              status: 'active',
-            },
-            note: 'This is a placeholder implementation. Real block details would be fetched from the AEM block collection.',
-          };
-
+          const result = await blockDetailsTool.handler({ blockName });
           return {
             jsonrpc: '2.0',
-            result: workerWrapToolJSONResult(blockDetails),
+            result,
             id: message.id,
           };
         } catch (error) {

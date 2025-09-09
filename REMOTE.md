@@ -22,18 +22,20 @@ An MCP (Model Context Protocol) server that provides tools for interacting with 
 - **`audit-log`**: Retrieve comprehensive audit logs with time filtering (from, to, since parameters)
 - **`aem-docs-search`**: Search official AEM documentation at www.aem.live with ranking and content retrieval
 
+- **`block-list`**: Get list of available AEM blocks from the official Block Collection
+- **`block-details`**: Get detailed information (JS, CSS, HTML) for specific AEM blocks from the Block Collection
+
 ### 🚧 Limited Implementation Tools
 
 - **`rum-data`**: Get Core Web Vitals and engagement metrics 
   - *Note: Returns structured response but full RUM bundle processing requires porting @adobe/rum-distiller to Workers environment*
-- **`block-list`**: Get list of available AEM blocks
-  - *Note: Currently returns placeholder block list - needs integration with actual block registry*
-- **`block-details`**: Get detailed information about specific AEM blocks  
-  - *Note: Currently returns placeholder details - needs integration with actual block collection API*
 
 ### 🔧 Recent Enhancements
 
-**December 2024**: The Cloudflare Workers version has been **completely rewritten** from stub implementations to fully functional tools that make real API calls to Helix Admin APIs. All tools now provide actual functionality instead of placeholder responses.
+**December 2024**: The Cloudflare Workers version has been **completely rewritten** from stub implementations to fully functional tools:
+- **Real API Integration**: All tools now make actual calls to Helix Admin APIs instead of returning placeholder responses
+- **Block Collection Integration**: Block tools now use the official AEM Block Collection data and fetch real JS, CSS, and HTML code
+- **Consistent Architecture**: Workers and local versions now share the same tool implementations for maintainability
 
 ## Cursor AI Setup
 
