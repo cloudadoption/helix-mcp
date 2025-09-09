@@ -30,13 +30,6 @@ An MCP (Model Context Protocol) server that provides tools for interacting with 
 - **`rum-data`**: Get Core Web Vitals and engagement metrics 
   - *Note: Returns structured response but full RUM bundle processing requires porting @adobe/rum-distiller to Workers environment*
 
-### 🔧 Recent Enhancements
-
-**December 2024**: The Cloudflare Workers version has been **completely rewritten** from stub implementations to fully functional tools:
-- **Real API Integration**: All tools now make actual calls to Helix Admin APIs instead of returning placeholder responses
-- **Block Collection Integration**: Block tools now use the official AEM Block Collection data and fetch real JS, CSS, and HTML code
-- **Consistent Architecture**: Workers and local versions now share the same tool implementations for maintainability
-
 ## Cursor AI Setup
 
 To use this MCP server with Cursor AI, go to `Cursor Settings`, `MCP` and add a new server with the following configuration:
