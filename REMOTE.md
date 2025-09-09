@@ -13,13 +13,27 @@ An MCP (Model Context Protocol) server that provides tools for interacting with 
 
 ## Available Tools
 
-- `echo`: Simple echo tool for testing
-- `page-status`: Get status of a single page
-- `start-bulk-page-status`: Start bulk page status job
-- `check-bulk-page-status`: Check bulk page status job results
-- `audit-log`: Retrieve audit logs
-- `rum-data`: Get Core Web Vitals and engagement metrics
-- `aem-docs-search`: Search AEM documentation
+### ✅ Fully Functional Tools
+
+- **`echo`**: Simple echo tool for testing
+- **`page-status`**: Get detailed status of a single page (published, previewed, edited timestamps and URLs)
+- **`start-bulk-page-status`**: Start asynchronous bulk page status analysis jobs for entire sites
+- **`check-bulk-page-status`**: Check bulk page status job results with detailed page analysis
+- **`audit-log`**: Retrieve comprehensive audit logs with time filtering (from, to, since parameters)
+- **`aem-docs-search`**: Search official AEM documentation at www.aem.live with ranking and content retrieval
+
+### 🚧 Limited Implementation Tools
+
+- **`rum-data`**: Get Core Web Vitals and engagement metrics 
+  - *Note: Returns structured response but full RUM bundle processing requires porting @adobe/rum-distiller to Workers environment*
+- **`block-list`**: Get list of available AEM blocks
+  - *Note: Currently returns placeholder block list - needs integration with actual block registry*
+- **`block-details`**: Get detailed information about specific AEM blocks  
+  - *Note: Currently returns placeholder details - needs integration with actual block collection API*
+
+### 🔧 Recent Enhancements
+
+**December 2024**: The Cloudflare Workers version has been **completely rewritten** from stub implementations to fully functional tools that make real API calls to Helix Admin APIs. All tools now provide actual functionality instead of placeholder responses.
 
 ## Cursor AI Setup
 
