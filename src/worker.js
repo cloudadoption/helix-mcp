@@ -23,7 +23,7 @@ function workerFormatHelixAdminURL(api, org, repo, branch, path, ext) {
 async function workerHelixAdminRequest(url, options = {}, apiToken = null, env = {}) {
   const VERSION = '0.0.1';
   const USER_AGENT = `modelcontextprotocol/servers/helix/v${VERSION} Cloudflare-Workers`;
-  
+
   const headers = {
     'User-Agent': USER_AGENT,
     ...options.headers,
@@ -288,9 +288,9 @@ async function handleMcpMessage(message, _headers, env = {}) {
             domainkey: { type: 'string' },
             startdate: { type: 'string' },
             enddate: { type: 'string' },
-            aggregation: { 
+            aggregation: {
               type: 'string',
-              enum: ['pageviews', 'visits', 'bounces', 'organic', 'earned', 'lcp', 'cls', 'inp', 'ttfb', 'engagement', 'errors']
+              enum: ['pageviews', 'visits', 'bounces', 'organic', 'earned', 'lcp', 'cls', 'inp', 'ttfb', 'engagement', 'errors'],
             },
           },
           required: ['url', 'domainkey', 'aggregation'],
@@ -368,7 +368,7 @@ async function handleMcpMessage(message, _headers, env = {}) {
         const { org, site, branch = 'main', path, helixAdminApiToken } = args;
         const url = workerFormatHelixAdminURL('status', org, site, branch, path);
         const response = await workerHelixAdminRequest(url, {}, helixAdminApiToken, env);
-        
+
         return {
           jsonrpc: '2.0',
           result: workerWrapToolJSONResult(response),
@@ -380,15 +380,15 @@ async function handleMcpMessage(message, _headers, env = {}) {
       if (name === 'audit-log') {
         const { org, site, branch = 'main', from, to, since, helixAdminApiToken } = args;
         const baseUrl = `${workerFormatHelixAdminURL('log', org, site, branch, '').replace(/\/$/, '')}`;
-        
+
         const queryParams = new URLSearchParams();
         if (from) queryParams.append('from', from);
         if (to) queryParams.append('to', to);
         if (since) queryParams.append('since', since);
-        
+
         const url = queryParams.toString() ? `${baseUrl}?${queryParams.toString()}` : baseUrl;
         const response = await workerHelixAdminRequest(url, {}, helixAdminApiToken, env);
-        
+
         return {
           jsonrpc: '2.0',
           result: workerWrapToolJSONResult(response),
@@ -400,7 +400,7 @@ async function handleMcpMessage(message, _headers, env = {}) {
       if (name === 'start-bulk-page-status') {
         const { org, site, branch = 'main', path = '/', helixAdminApiToken } = args;
         const url = workerFormatHelixAdminURL('status', org, site, branch, '/*');
-        
+
         // Validate and normalize path
         let normalizedPath = path || '/*';
         if (!normalizedPath.startsWith('/')) normalizedPath = `/${normalizedPath}`;
@@ -470,7 +470,7 @@ async function handleMcpMessage(message, _headers, env = {}) {
         const info = jobId.split('/');
         const org = info[0];
         const site = info[1];
-        
+
         // Get hosts for preview/live links
         let live = null;
         let preview = null;
@@ -504,7 +504,7 @@ async function handleMcpMessage(message, _headers, env = {}) {
       // Handle aem-docs-search tool
       if (name === 'aem-docs-search') {
         const { query, maxResults = 10 } = args;
-        
+
         try {
           const indexUrl = 'https://www.aem.live/docpages-index.json';
           const response = await fetch(indexUrl);
@@ -541,19 +541,19 @@ async function handleMcpMessage(message, _headers, env = {}) {
       // Handle rum-data tool (simplified version - full RUM distiller may not work in Workers)
       if (name === 'rum-data') {
         const { url, domainkey, startdate, enddate, aggregation } = args;
-        
+
         // Remove protocol from URL
         const domain = url.replace(/^https?:\/\//, '');
-        
+
         // Get default dates if not provided
         const now = new Date();
         const oneWeekAgo = new Date(now);
         oneWeekAgo.setDate(now.getDate() - 7);
         const format = (d) => d.toISOString().split('T')[0];
-        
+
         const startDateFinal = startdate?.trim() || format(oneWeekAgo);
         const endDateFinal = enddate?.trim() || format(now);
-        
+
         try {
           // Simplified RUM data fetch - just return basic structure
           // Full RUM bundle processing would require porting @adobe/rum-distiller
@@ -606,7 +606,7 @@ async function handleMcpMessage(message, _headers, env = {}) {
           return {
             jsonrpc: '2.0',
             result: workerWrapToolJSONResult({
-              blocks: blocks.map(name => ({ name, description: `${name} block` }))
+              blocks: blocks.map(name => ({ name, description: `${name} block` })),
             }),
             id: message.id,
           };
@@ -625,7 +625,7 @@ async function handleMcpMessage(message, _headers, env = {}) {
       // Handle block-details tool
       if (name === 'block-details') {
         const { blockName } = args;
-        
+
         try {
           // This is a placeholder - the actual implementation would fetch from a block registry
           const blockDetails = {
