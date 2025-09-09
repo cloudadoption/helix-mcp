@@ -92,27 +92,6 @@ npm run deploy:production
 npm run deploy
 # Available at: https://helix-mcp-server.aem-poc-lab.workers.dev
 ```
-
-### Account Configuration
-
-- **Account ID**: `e1e360001bae52605e88f2b2d0e82d27`
-- **Account Name**: Adobe AEM (Hackathon)
-- **Custom Domain**: `bbird.live` (when configured)
-
-### Alternative Accounts
-
-If you need to deploy to a different account:
-
-```bash
-# Adobe AEM (Hackathon) account
-npm run deploy:adobe:staging
-npm run deploy:adobe:production
-
-# Franklin-Dev account (default)
-npm run deploy:franklin:staging
-npm run deploy:franklin:production
-```
-
 ### Example Usage After Deployment
 
 ```bash
