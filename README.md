@@ -39,7 +39,7 @@ To use this MCP server with Cursor AI, go to `Cursor Settings`, `MCP` and a `New
 
 ```json
 "helix-mcp-server": {
-"command": "npx",
+  "command": "npx",
   "args": [
     "https://github.com/cloudadoption/helix-mcp"
   ],
