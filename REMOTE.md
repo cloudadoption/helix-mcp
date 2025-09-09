@@ -77,7 +77,7 @@ To use this MCP server with VS Code and GitHub Copilot:
 
 ### Deploy to Cloudflare Workers
 
-The server is configured to deploy to the **Adobe AEM (Hackathon)** Cloudflare account:
+The server is configured to deploy to the **Adobe AEM POC** Cloudflare account:
 
 ```bash
 # Deploy to staging environment
