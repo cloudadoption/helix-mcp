@@ -65,7 +65,7 @@ const aemDocsSearchTool = {
     <important_notes>
       1. This tool searches the official AEM documentation at www.aem.live
       2. Search results will include relevant documentation pages, guides, and examples
-      3. Use specific keywords to get more targeted results
+      3. For best results, search with just a few specific keywords rather than a phrase or sentence
       4. The tool returns documentation URLs and relevant content snippets
       5. Results are limited to publicly available AEM documentation
     </important_notes>
