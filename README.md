@@ -37,9 +37,9 @@ This project uses ESLint for code quality and consistency. The linting configura
 
 To use this MCP server with Cursor AI, go to `Cursor Settings`, `MCP` and a `New global MCP server`. Add this entry to your list of `mcpServers`:
 
-```
+```json
 "helix-mcp-server": {
- "command": "npx",
+  "command": "npx",
   "args": [
     "https://github.com/cloudadoption/helix-mcp"
   ],
