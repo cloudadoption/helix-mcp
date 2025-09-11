@@ -1,5 +1,13 @@
 import { z } from 'zod';
 import { wrapToolJSONResult, formatHelixAdminURL, helixAdminRequest } from '../../common/utils.js';
+import { HelixMCPTelemetry } from '../../telemetry-utils.js';
+
+// Original page status handler (telemetry is handled by the wrapper)
+async function handlePageStatus({ org, site, branch, path }) {
+  const url = formatHelixAdminURL('status', org, site, branch, path);
+  const response = await helixAdminRequest(url);
+  return wrapToolJSONResult(response);
+}
 
 const pageStatusTool = {
   name: 'page-status',
@@ -37,13 +45,6 @@ const pageStatusTool = {
       openWorldHint: true,
     },
   },
-  handler: async ({ org, site, branch, path }) => {
-    const url = formatHelixAdminURL('status', org, site, branch, path);
-
-    const response = await helixAdminRequest(url);
-
-    return wrapToolJSONResult(response);
-  },
+  handler: handlePageStatus,
 };
-
 export default pageStatusTool;

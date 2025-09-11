@@ -5,6 +5,7 @@ import registerTools from './operations/tools/index.js';
 import registerResources from './operations/resources/index.js';
 import registerResourceTemplates from './operations/resource-templates/index.js';
 import registerPrompts from './operations/prompts/index.js';
+import { HelixMCPTelemetry } from './telemetry-utils.js';
 
 import { VERSION } from './common/global.js';
 
@@ -14,6 +15,12 @@ const server = new McpServer(
     version: VERSION,
   },
 );
+
+// Initialize telemetry
+const telemetry = new HelixMCPTelemetry({
+  toolId: 'helix-mcp',
+  enabled: process.env.TELEMETRY_ENABLED !== 'false'
+});
 
 registerTools(server);
 registerResources(server);

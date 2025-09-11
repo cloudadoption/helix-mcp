@@ -71,7 +71,8 @@ const auditLogTool = {
       openWorldHint: true,
     },
   },
-  handler: async ({ org, site, branch, from, to, since }) => {
+  handler: async (request) => {
+    const { org, site, branch, from, to, since } = request.params.arguments;
     // Build the base URL for the logs endpoint
     const baseUrl = `${formatHelixAdminURL('log', org, site, branch, '').replace(/\/$/, '')}`;
 
