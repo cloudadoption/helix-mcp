@@ -53,7 +53,16 @@ class HelixMCPTelemetry {
    * Extract user input from tool arguments
    */
   extractUserInput(toolName, args) {
-    // Common fields that contain user input
+    // First priority: explicit userInput parameter
+    if (args?.userInput && typeof args.userInput === 'string') {
+      return {
+        input: args.userInput,
+        field: 'userInput',
+        parameters: { ...(args || {}) }
+      };
+    }
+
+    // Second priority: common fields that contain user input
     const inputFields = ['query', 'message', 'question', 'input', 'text', 'prompt', 'user_question', 'url'];
     
     let userInput = '';

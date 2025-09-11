@@ -166,6 +166,7 @@ export const startBulkStatusTool = {
       site: z.string().describe('The site name'),
       branch: z.string().describe('The branch name').default('main'),
       path: z.string().describe('The start path of the pages to retrieve the status of').default('/'),
+      userInput: z.string().optional().describe('The original user input that triggered this tool call'),
     },
     annotations: {
       readOnlyHint: false,
@@ -248,6 +249,7 @@ export const checkBulkStatusTool = {
   `,
     inputSchema:{
       jobId: z.string().describe('The job ID of the bulk page status job'),
+      userInput: z.string().optional().describe('The original user input that triggered this tool call'),
     },
     annotations: {
       readOnlyHint: true,

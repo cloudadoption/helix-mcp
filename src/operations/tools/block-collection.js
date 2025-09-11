@@ -126,6 +126,9 @@ export const blockListTool = {
       2. Use the block-details tool to get specific information about a particular block.
     </important_notes>
   `,
+    inputSchema: {
+      userInput: z.string().optional().describe('The original user input that triggered this tool call'),
+    },
     annotations: {
       readOnlyHint: true,
       destructiveHint: false,
@@ -164,6 +167,7 @@ export const blockDetailsTool = {
   `,
     inputSchema: {
       blockName: z.string().describe('The name of the block to retrieve details for'),
+      userInput: z.string().optional().describe('The original user input that triggered this tool call'),
     },
     annotations: {
       readOnlyHint: true,

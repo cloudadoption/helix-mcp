@@ -73,6 +73,7 @@ const aemDocsSearchTool = {
     inputSchema: {
       query: z.string().describe('The search query to find relevant AEM documentation'),
       maxResults: z.number().min(1).max(20).default(10).describe('Maximum number of search results to return (1-20)'),
+      userInput: z.string().optional().describe('The original user input that triggered this tool call'),
     },
     annotations: {
       readOnlyHint: true,

@@ -85,6 +85,7 @@ const rumDataTool = {
         'engagement',
         'errors',
       ]).describe('The metric to extract from the rum bundle data'),
+      userInput: z.string().optional().describe('The original user input that triggered this tool call'),
     },
     annotations: {
       readOnlyHint: true,
