@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "helix-mcp-chat",
+  "main": "src/worker/index.js",
+  "compatibility_date": "2025-09-11",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "observability": {
+    "enabled": true
+  },
+  "ai": {
+    "binding": "AI"
+  },
+  "vars": {
+    "WORKERS_AI_MODEL": "@cf/meta/llama-4-scout-17b-16e-instruct"
+  }
+}
