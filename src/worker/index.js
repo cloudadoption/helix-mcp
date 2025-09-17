@@ -1,11 +1,11 @@
-import { router } from './router.js';
+import handleChat from './chat.js';
 import checkAuth from './auth.js';
 
 /**
  * Main worker request handler
  */
 export default {
-  async fetch(request, env, ctx) {
+  async fetch(request, env, _ctx) {
     try {
       const isAuthenticated = checkAuth(request, env);
       if (!isAuthenticated) {
@@ -14,7 +14,20 @@ export default {
         });
       }
 
-      return await router(request, env, ctx);
+      const url = new URL(request.url);
+      if (url.pathname === '/chat') {
+        const upgradeHeader = request.headers.get('Upgrade');
+        if (!upgradeHeader || upgradeHeader !== 'websocket') {
+          return new Response('Expected Upgrade: websocket', { status: 426 });
+        }
+
+        return handleChat(env);
+      }
+
+
+      return new Response('Not Found', {
+        status: 404,
+      });
     } catch (e) {
       console.error({
         message: 'Error routing/processing request',

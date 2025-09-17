@@ -13,6 +13,7 @@
     "binding": "AI"
   },
   "vars": {
-    "WORKERS_AI_MODEL": "@cf/meta/llama-4-scout-17b-16e-instruct"
+    "WORKERS_AI_MODEL": "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+    "WORKERS_AI_TEMPERATURE": 0.8
   }
 }

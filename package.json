@@ -27,6 +27,6 @@
     "@modelcontextprotocol/inspector": "^0.16.1",
     "eslint": "^9.34.0",
     "globals": "^16.3.0",
-    "wrangler": "^4.35.0"
+    "wrangler": "^4.36.0"
   }
 }

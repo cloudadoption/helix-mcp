@@ -3,7 +3,7 @@ import handleChat from './chat.js';
 const routes = [
   {
     route: '/chat',
-    method: 'POST',
+    method: 'GET',
     handler: handleChat,
   },
 ];
