@@ -34,7 +34,23 @@ async function workerHelixAdminRequest(url, options = {}, apiToken = null, env =
 
   const token = apiToken || env.HELIX_ADMIN_API_TOKEN;
   if (token) {
-    headers['X-Auth-Token'] = token;
+    // Smart token detection: use Authorization Bearer for DA tokens
+    try {
+      const parts = token.split('.');
+      if (parts.length === 3) {
+        const payload = JSON.parse(atob(parts[1]));
+        
+        if (payload.type === 'access_token') {
+          headers['Authorization'] = `Bearer ${token}`;
+        } else {
+          headers['X-Auth-Token'] = token;
+        }
+      } else {
+        headers['X-Auth-Token'] = token;
+      }
+    } catch (e) {
+      headers['X-Auth-Token'] = token;
+    }
   }
 
   const init = {
