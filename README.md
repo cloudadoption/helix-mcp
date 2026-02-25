@@ -2,7 +2,9 @@
 
 [![CI](https://github.com/cloudadoption/helix-mcp/actions/workflows/main.yml/badge.svg)](https://github.com/cloudadoption/helix-mcp/actions/workflows/main.yml)
 
-An MCP (Model Context Protocol) server that provides tools to enable developers and administators of sites deployed with AEM Edge Delivery Services and Document Authoring.
+An MCP (Model Context Protocol) server that provides admin tools for sites deployed with AEM Edge Delivery Services and Document Authoring.
+
+> **Note:** Developer-focused tools (docs search, block collection) have moved to [adobe/skills](https://github.com/adobe/skills) and are no longer part of this server.
 
 ## Features
 
@@ -13,9 +15,6 @@ An MCP (Model Context Protocol) server that provides tools to enable developers 
 - **check-bulk-status** - Checks the status of a bulk page status job and retrieves results for all pages including their publishing and preview status.
 - **audit-log** - Retrieves detailed audit logs from the AEM Edge Delivery Services repository showing user activities, system operations, and performance metrics.
 - **rum-data** - Queries Core Web Vitals and engagement metrics for sites or pages using operational telemetry data with various aggregation types.
-- **aem-docs-search** - Searches the AEM documentation at www.aem.live for specific topics, features, or guidance.
-- **block-list** - Retrieve the list of blocks in the AEM Block Collection
-- **block-details** - Retrieve the details for the implementation of a specific block in the AEM Block Collection
 
 ### Prompts
 
