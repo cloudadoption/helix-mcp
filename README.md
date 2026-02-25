@@ -30,7 +30,27 @@ This project uses ESLint for code quality and consistency. The linting configura
 
 ## Usage
 
-### Cursor AI setup
+### Remote Server (Hosted)
+
+The server is available as a hosted Cloudflare Worker with Streamable HTTP transport. Configure your MCP client to connect using the remote URL with an `Authorization` header:
+
+```json
+"helix-mcp-server": {
+  "type": "streamableHttp",
+  "url": "https://helix-mcp.cloudadoption.workers.dev/mcp",
+  "headers": {
+    "Authorization": "Bearer your_api_token_here"
+  }
+}
+```
+
+> **Note:** The rum-data tool may have limited functionality when running on the hosted server due to `@adobe/rum-distiller` compatibility with Cloudflare Workers.
+
+### Local (npx via stdio)
+
+For local usage, you can run the server directly via `npx` with the token provided as an environment variable.
+
+#### Cursor AI setup
 
 [![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/en/install-mcp?name=helix-mcp-server&config=eyJjb21tYW5kIjoibnB4IGh0dHBzOi8vZ2l0aHViLmNvbS9jbG91ZGFkb3B0aW9uL2hlbGl4LW1jcCIsImVudiI6eyJIRUxJWF9BRE1JTl9BUElfVE9LRU4iOiJ5b3VyX2FwaV90b2tlbl9oZXJlIiwiUlVNX0RPTUFJTl9LRVkiOiJ5b3VyX3J1bV9kb21haW5fa2V5In19)
 
@@ -49,7 +69,7 @@ To use this MCP server with Cursor AI, go to `Cursor Settings`, `MCP` and a `New
 }
 ```
 
-### VS Code with GitHub Copilot setup
+#### VS Code with GitHub Copilot setup
 
 To use this MCP server with VS Code and GitHub Copilot:
 
@@ -81,6 +101,22 @@ To use this MCP server with VS Code and GitHub Copilot:
 5. **Verify installation**: Open the Command Palette (Cmd/Ctrl + Shift + P) and type "MCP" to see available MCP commands.
 
 **Note**: Replace `your_api_token_here` with your actual API tokens. You can obtain the Helix admin token by following these instructions: [https://www.aem.live/docs/admin-apikeys](https://www.aem.live/docs/admin-apikeys) OR by logging into [admin.hlx.page/login](https://admin.hlx.page/login) and capturing the `auth_token` from the cookie.
+
+## Deployment
+
+The server deploys as a Cloudflare Worker.
+
+```bash
+npm run deploy              # default environment
+npm run deploy:staging      # staging
+npm run deploy:production   # production
+```
+
+For local development with the worker:
+
+```bash
+npm run dev:worker
+```
 
 ## Contributing
 

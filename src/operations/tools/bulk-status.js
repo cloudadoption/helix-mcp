@@ -1,11 +1,11 @@
 import { z } from 'zod';
-import { wrapToolJSONResult, formatHelixAdminURL, helixAdminRequest } from '../../common/utils.js';
+import { wrapToolJSONResult, formatHelixAdminURL, helixAdminRequest, resolveHelixToken } from '../../common/utils.js';
 import { HELIX_ADMIN_API_URL } from '../../common/global.js';
 
-async function fetchHosts(org, site) {
+async function fetchHosts(org, site, token) {
   try {
     const url = formatHelixAdminURL('status', org, site, 'main', '');
-    const json = await helixAdminRequest(url);
+    const json = await helixAdminRequest(url, {}, token);
     return {
       live: new URL(json.live.url).host,
       preview: new URL(json.preview.url).host,
@@ -126,17 +126,18 @@ function processPageStatus(data, preview, live) {
   };
 }
 
-export const startBulkStatusTool = {
-  name: 'start-bulk-page-status',
-  config: {
-    title: 'Start Bulk Page Status',
-    description: `
+export function createStartBulkStatusTool(token) {
+  return {
+    name: 'start-bulk-page-status',
+    config: {
+      title: 'Start Bulk Page Status',
+      description: `
     <use_case>
       Use this tool to retrieve the status of all pages in a site, or a subset of pages in a site under a given path. The results will include information for when the pages
       were last published, previewed, and edited, as well as who performed those actions.
 
       This tool is asynchronous and will return a job ID. You can use the check-bulk-page-status tool to check the status of the job and retrieve results.
-      
+
       **When to use this tool:**
       - You need status information for MULTIPLE pages or an entire site
       - You want to find pages that are previewed but not published
@@ -146,7 +147,7 @@ export const startBulkStatusTool = {
       - You want to find pages that haven't been previewed or published
       - You need to check publishing workflows across many pages
       - You're troubleshooting publishing issues across the site
-      
+
       **When NOT to use this tool:**
       - You only need status for ONE specific page (use page-status tool instead)
       - You need immediate results (this is asynchronous)
@@ -161,52 +162,55 @@ export const startBulkStatusTool = {
       5. If the user provides a path, it will be used to filter the pages to retrieve the status of which would be faster than retrieving the status of all pages.
     </important_notes>
   `,
-    inputSchema:{
-      org: z.string().describe('The organization name'),
-      site: z.string().describe('The site name'),
-      branch: z.string().describe('The branch name').default('main'),
-      path: z.string().describe('The start path of the pages to retrieve the status of').default('/'),
+      inputSchema: {
+        org: z.string().describe('The organization name'),
+        site: z.string().describe('The site name'),
+        branch: z.string().describe('The branch name').default('main'),
+        path: z.string().describe('The start path of the pages to retrieve the status of').default('/'),
+      },
+      annotations: {
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
     },
-    annotations: {
-      readOnlyHint: false,
-      destructiveHint: false,
-      idempotentHint: false,
-      openWorldHint: true,
+    handler: async ({ org, site, branch, path }) => {
+      const resolvedToken = await resolveHelixToken(token, org, site, branch);
+      const url = formatHelixAdminURL('status', org, site, branch, '/*');
+
+      const jobJson = await helixAdminRequest(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          paths: [validatePath(path)],
+          select: ['edit', 'preview', 'live'],
+          forceAsync: true,
+        }),
+      }, resolvedToken);
+
+      if (!jobJson.job || jobJson.job.state !== 'created') {
+        throw new Error('Failed to create bulk status job');
+      }
+
+      const jobId = jobJson.links.self.split('/job/').pop();
+
+      return wrapToolJSONResult({
+        name: jobJson.job.name,
+        state: jobJson.job.state,
+        created: jobJson.job.createTime,
+        jobId,
+      });
     },
-  },
-  handler: async ({ org, site, branch, path }) => {
-    const url = formatHelixAdminURL('status', org, site, branch, '/*');
+  };
+}
 
-    const jobJson = await helixAdminRequest(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        paths: [validatePath(path)],
-        select: ['edit', 'preview', 'live'],
-        forceAsync: true,
-      }),
-    });
-
-    if (!jobJson.job || jobJson.job.state !== 'created') {
-      throw new Error('Failed to create bulk status job');
-    }
-
-    const jobId = jobJson.links.self.split('/job/').pop();
-
-    return wrapToolJSONResult({
-      name: jobJson.job.name,
-      state: jobJson.job.state,
-      created: jobJson.job.createTime,
-      jobId,
-    });
-  },
-};
-
-export const checkBulkStatusTool = {
-  name: 'check-bulk-page-status',
-  config: {
-    title: 'Check Bulk Page Status',
-    description: `
+export function createCheckBulkStatusTool(token) {
+  return {
+    name: 'check-bulk-page-status',
+    config: {
+      title: 'Check Bulk Page Status',
+      description: `
     <use_case>
       Use this tool to check the status of a bulk page status job and get the results. The response will include detailed information about all pages in the site or specified path, including:
 
@@ -246,49 +250,53 @@ export const checkBulkStatusTool = {
       5. All timestamps are converted to UTC format for consistency.
     </important_notes>
   `,
-    inputSchema:{
-      jobId: z.string().describe('The job ID of the bulk page status job'),
+      inputSchema: {
+        jobId: z.string().describe('The job ID of the bulk page status job'),
+      },
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
     },
-    annotations: {
-      readOnlyHint: true,
-      destructiveHint: false,
-      idempotentHint: false,
-      openWorldHint: true,
-    },
-  },
-  handler: async ({ jobId }) => {
-    const url = `${HELIX_ADMIN_API_URL}/job/${jobId}/details`;
+    handler: async ({ jobId }) => {
+      const info = jobId.split('/');
+      const org = info[0];
+      const site = info[1];
+      const ref = info[2] || 'main';
+      const resolvedToken = await resolveHelixToken(token, org, site, ref);
 
-    const jobDetailsJson = await helixAdminRequest(url, {
-      method: 'GET',
-    });
-    const state = jobDetailsJson.state;
+      const url = `${HELIX_ADMIN_API_URL}/job/${jobId}/details`;
 
-    if (state !== 'completed' && state !== 'stopped') {
+      const jobDetailsJson = await helixAdminRequest(url, {
+        method: 'GET',
+      }, resolvedToken);
+      const state = jobDetailsJson.state;
+
+      if (state !== 'completed' && state !== 'stopped') {
+        return wrapToolJSONResult({
+          name: jobDetailsJson.name,
+          state: jobDetailsJson.state,
+          created: jobDetailsJson.createTime,
+          startTime: jobDetailsJson.startTime,
+          jobId,
+        });
+      }
+
+      const { live, preview } = await fetchHosts(org, site, resolvedToken);
+
+      const data = processPageStatus(jobDetailsJson.data, preview, live);
+
       return wrapToolJSONResult({
         name: jobDetailsJson.name,
         state: jobDetailsJson.state,
         created: jobDetailsJson.createTime,
         startTime: jobDetailsJson.startTime,
+        stopTime: jobDetailsJson.stopTime,
         jobId,
+        data,
       });
-    }
-
-    const info = jobId.split('/');
-    const org = info[0];
-    const site = info[1];
-    const { live, preview } = await fetchHosts(org, site);
-
-    const data = processPageStatus(jobDetailsJson.data, preview, live);
-
-    return wrapToolJSONResult({
-      name: jobDetailsJson.name,
-      state: jobDetailsJson.state,
-      created: jobDetailsJson.createTime,
-      startTime: jobDetailsJson.startTime,
-      stopTime: jobDetailsJson.stopTime,
-      jobId,
-      data,
-    });
-  },
-};
+    },
+  };
+}

@@ -29,13 +29,15 @@ function getDefaultDates() {
   };
 }
 
-const rumDataTool = {
-  name: 'rum-data',
-  config: {
-    title: 'Operational Telemetry Data Query Using URL and Date',
-    description: `
+// eslint-disable-next-line no-unused-vars
+export default function createRumDataTool(token) {
+  return {
+    name: 'rum-data',
+    config: {
+      title: 'Operational Telemetry Data Query Using URL and Date',
+      description: `
         <use_case>
-        Use this tool to retrieve Core Web Vitals (CWV) and engagement metrics for a given site or page. 
+        Use this tool to retrieve Core Web Vitals (CWV) and engagement metrics for a given site or page.
         The results provide performance insights across various aggregation types and are scoped to specific paths when applicable.
 
         - **aggregation**: Metric to aggregate by. Must be one of the following:
@@ -57,62 +59,59 @@ const rumDataTool = {
         <important_notes>
         - The **domainkey** must be provided. If you're not seeing any data, reach out to your Adobe point of contact to obtain a domain key.
 
-        - If the URL contains a protocol (e.g., "https://" or "http://"), always **strip the protocol** and pass only the hostname + path. 
+        - If the URL contains a protocol (e.g., "https://" or "http://"), always **strip the protocol** and pass only the hostname + path.
         Example: convert \`https://www.example.com/page\` to \`www.example.com/page\`
 
         - When handling the data, the agent must be **extremely accurate and careful**. The insights from this tool are used to **drive key operational decisions**, so **misreporting or inaccuracies are not acceptable**.
 
         - If no dates are specified, DO NOT pass any dates.
-        
+
         - **CRITICAL**: When presenting the results, you MUST always include the date range that was queried. State clearly: "This data covers the period from [start date] to [end date]" in your response.
         </important_notes>
     `,
-    inputSchema: {
-      url: z.string().describe('The full URL to get data for, including path if needed'),
-      domainkey: z.string().describe('The domain key used for authorization and bundle access'),
-      startdate: z.string().optional().describe('Start date in YYYY-MM-DD format'),
-      enddate: z.string().optional().describe('End date in YYYY-MM-DD format'),
-      aggregation: z.enum([
-        'pageviews',
-        'visits',
-        'bounces',
-        'organic',
-        'earned',
-        'lcp',
-        'cls',
-        'inp',
-        'ttfb',
-        'engagement',
-        'errors',
-      ]).describe('The metric to extract from the rum bundle data'),
-    },
-    annotations: {
-      readOnlyHint: true,
-      destructiveHint: false,
-      idempotentHint: false,
-      openWorldHint: true,
-    },
-  },
-
-  handler: async ({ url, domainkey, startdate, enddate, aggregation }) => {
-    const domain = removeProtocol(url);
-    const { start, end } = getDefaultDates();
-
-    // Default to one week ago to today if no dates are provided
-    const startDateFinal = startdate?.trim() || start;
-    const endDateFinal = enddate?.trim() || end;
-
-    const result = await getAllBundles(domain, domainkey || process.env.RUM_DOMAIN_KEY, startDateFinal, endDateFinal, aggregation);
-
-    // Include date range in the response
-    return wrapToolJSONResult({
-      ...result,
-      dateRange: {
-        start: startDateFinal,
-        end: endDateFinal,
+      inputSchema: {
+        url: z.string().describe('The full URL to get data for, including path if needed'),
+        domainkey: z.string().describe('The domain key used for authorization and bundle access'),
+        startdate: z.string().optional().describe('Start date in YYYY-MM-DD format'),
+        enddate: z.string().optional().describe('End date in YYYY-MM-DD format'),
+        aggregation: z.enum([
+          'pageviews',
+          'visits',
+          'bounces',
+          'organic',
+          'earned',
+          'lcp',
+          'cls',
+          'inp',
+          'ttfb',
+          'engagement',
+          'errors',
+        ]).describe('The metric to extract from the rum bundle data'),
       },
-    });
-  },
-};
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
+    },
 
-export default rumDataTool;
+    handler: async ({ url, domainkey, startdate, enddate, aggregation }) => {
+      const domain = removeProtocol(url);
+      const { start, end } = getDefaultDates();
+
+      const startDateFinal = startdate?.trim() || start;
+      const endDateFinal = enddate?.trim() || end;
+
+      const result = await getAllBundles(domain, domainkey || process.env.RUM_DOMAIN_KEY, startDateFinal, endDateFinal, aggregation);
+
+      return wrapToolJSONResult({
+        ...result,
+        dateRange: {
+          start: startDateFinal,
+          end: endDateFinal,
+        },
+      });
+    },
+  };
+}
