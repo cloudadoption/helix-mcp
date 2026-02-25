@@ -1,15 +1,16 @@
 import { z } from 'zod';
-import { wrapToolJSONResult, formatHelixAdminURL, helixAdminRequest } from '../../common/utils.js';
+import { wrapToolJSONResult, formatHelixAdminURL, helixAdminRequest, resolveHelixToken } from '../../common/utils.js';
 
-const pageStatusTool = {
-  name: 'page-status',
-  config: {
-    title: 'Page Status',
-    description: `
+export default function createPageStatusTool(token) {
+  return {
+    name: 'page-status',
+    config: {
+      title: 'Page Status',
+      description: `
     <use_case>
       Use this tool to retrieve the status of a single page. The results will include information for when the page
       was last published, previewed, and edited, as well as who performed those actions.
-      
+
       **When to use this tool:**
       - You need status information for ONE specific page
       - You know the exact page path
@@ -24,26 +25,26 @@ const pageStatusTool = {
       3. Do not make up any information, only use the information that is provided in the response to answer the user's question.
     </important_notes>
   `,
-    inputSchema:{
-      org: z.string().describe('The organization name'),
-      site: z.string().describe('The site name'),
-      branch: z.string().describe('The branch name').default('main'),
-      path: z.string().describe('The path of the page'),
+      inputSchema: {
+        org: z.string().describe('The organization name'),
+        site: z.string().describe('The site name'),
+        branch: z.string().describe('The branch name').default('main'),
+        path: z.string().describe('The path of the page'),
+      },
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
     },
-    annotations: {
-      readOnlyHint: true,
-      destructiveHint: false,
-      idempotentHint: false,
-      openWorldHint: true,
+    handler: async ({ org, site, branch, path }) => {
+      const resolvedToken = await resolveHelixToken(token, org, site, branch);
+      const url = formatHelixAdminURL('status', org, site, branch, path);
+
+      const response = await helixAdminRequest(url, {}, resolvedToken);
+
+      return wrapToolJSONResult(response);
     },
-  },
-  handler: async ({ org, site, branch, path }) => {
-    const url = formatHelixAdminURL('status', org, site, branch, path);
-
-    const response = await helixAdminRequest(url);
-
-    return wrapToolJSONResult(response);
-  },
-};
-
-export default pageStatusTool;
+  };
+}

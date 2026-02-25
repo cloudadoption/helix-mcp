@@ -1,24 +1,8 @@
 #!/usr/bin/env node
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import registerTools from './operations/tools/index.js';
-import registerResources from './operations/resources/index.js';
-import registerResourceTemplates from './operations/resource-templates/index.js';
-import registerPrompts from './operations/prompts/index.js';
+import { createServer } from './server.js';
 
-import { VERSION } from './common/global.js';
-
-const server = new McpServer(
-  {
-    name: 'helix-mcp-server',
-    version: VERSION,
-  },
-);
-
-registerTools(server);
-registerResources(server);
-registerResourceTemplates(server);
-registerPrompts(server);
+const server = createServer(process.env.HELIX_ADMIN_API_TOKEN);
 
 async function runServer() {
   const transport = new StdioServerTransport();
